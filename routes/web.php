@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,6 +21,12 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/daftar-fasilitas', [App\Http\Controllers\HomeController::class, 'listFasilitas'])->name('list.fasilitas');
-Route::get('/fasilitas', [App\Http\Controllers\HomeController::class, 'fasilitas'])->name('fasilitas');
+Route::controller(HomeController::class)->group(function () {
+    Route::get('/home', 'index')->name('home');
+    Route::get('/daftar-fasilitas', 'listFasilitas')->name('list.fasilitas');
+    Route::get('/fasilitas/{nama_tabel}', 'fasilitas')->name('fasilitas');
+    Route::post('/simpan-fasilitas', 'simpanDataTabel')->name('simpan.data.tabel');
+    Route::post('/import-data', 'importData')->name('import.data.tabel');
+    Route::get('/unduh-properti', 'exportFasilitas')->name('export.fasilitas');
+    Route::get('/reset-properti', 'resetFasilitas')->name('reset.fasilitas');
+});

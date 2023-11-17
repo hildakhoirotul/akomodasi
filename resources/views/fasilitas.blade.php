@@ -5,13 +5,14 @@
     <div class="col-12">
         <div class="card recent-sales overflow-auto">
             <div class="card-body">
-                <h5 class="card-title">Air Conditioner (AC)<span>| GA Section</span></h5>
+                <h5 class="card-title">{{ $fasilitas->name }} &nbsp<span>| GA Section</span></h5>
                 <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-primary"><i class="bi bi-plus-square"></i></button>
-                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-upload"></i></button>
-                    <button type="button" class="btn btn-primary"><i class="bi bi-download"></i></button>
-                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-trash"></i></button>
+                    <button type="button" class="btn btn-primary" id="addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
+                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-upload"></i>&nbsp Unggah</button>
+                    <button type="button" class="btn btn-primary"><i class="bi bi-download"></i>&nbsp Unduh</button>
+                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-trash"></i>&nbsp Reset</button>
                 </div>
+
                 <table class="table table-hover table-responsive">
                     <thead>
                         <tr>

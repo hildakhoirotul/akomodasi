@@ -58,8 +58,10 @@
                         <tr>
                             <th scope="col">No</th>
                             <th scope="col">Nama Properti</th>
+                            <th scope="col">Daftar Kolom</th>
                             <th scope="col">Jumlah Atribut</th>
                             <th scope="col">Jumlah</th>
+                            <th scope="col">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,8 +70,16 @@
                         <tr>
                             <th>{{ $i++ }}</th>
                             <td>{{ $l->name }}</td>
+                            <td>{{ implode(', ', json_decode($l->columns, true)) }}</td>
                             <td>{{ $l->jumlah_atribut }}</td>
                             <td>{{ $l->jumlah }}</td>
+                            <td>
+                                <form action="{{ route('delete.table', ['tabel' => $l->name]) }}" method="POST" style="display: inline-block;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="button" class="btn btn-danger" style="height: 33px;font-size: 13px;" onclick="confirmDelete(this)"><i class="bi bi-trash-fill"></i></button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -152,6 +162,25 @@
                     });
                 }
             });
+    }
+</script>
+<script>
+    function confirmDelete(button) {
+        var form = $(button).closest("form");
+        Swal.fire({
+            title: 'Apakah Anda yakin?',
+            text: "Data akan dihapus permanen!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Ya, hapus!',
+            cancelButtonText: 'Batal'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                form.submit();
+            }
+        });
     }
 </script>
 @endsection

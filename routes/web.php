@@ -29,4 +29,14 @@ Route::controller(HomeController::class)->group(function () {
     Route::post('/import-data', 'importData')->name('import.data.tabel');
     Route::get('/unduh-properti', 'exportFasilitas')->name('export.fasilitas');
     Route::get('/reset-properti', 'resetFasilitas')->name('reset.fasilitas');
+    Route::post('/tambah-kolom/{nama_tabel}', 'addColumn')->name('add.column');
+    Route::post('/hapus-kolom/{nama_tabel}', 'deleteColumn')->name('delete.column');
+    Route::post('/tambah-data/{nama_tabel}', 'tambahData')->name('store.data');
+    Route::delete('/hapus-tabel/{tabel}', 'hapusTabel')->name('delete.table');
+    Route::delete('/hapus-data/{tabel}/{id}', 'hapusData')->name('delete.data');
+    Route::post('/edit-data/{tabel}/{id}', 'editData')->name('edit.data');
+    Route::post('/import-data/{nama_tabel}', 'importDataColumn')->name('import.data');
+    Route::get('/export-data/{nama_tabel}', 'exportDataColumn')->name('export.data');
+    Route::get('/export-template/{nama_tabel}', 'exportTemplateColumn')->name('export.template');
+    Route::delete('/reset-data/{nama_tabel}', 'resetDataColumn')->name('reset.data');
 });

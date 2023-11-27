@@ -1273,3 +1273,18 @@ h6 {
   color: #e94c49;
   font-size: 13px;
 }
+
+.table-header .btn.btn-primary{
+  font-size: 13px;
+  height: 33px;
+}
+
+button.btn-close[data-bs-dismiss="modal"] {
+  font-size: 30px;
+}
+
+.btn-group .btn-warning,
+.btn-group .btn-danger {
+  height: 33px;
+  font-size: 13px;
+}

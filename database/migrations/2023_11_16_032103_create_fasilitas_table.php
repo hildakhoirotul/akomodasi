@@ -16,6 +16,7 @@ class CreateFasilitasTable extends Migration
         Schema::create('fasilitas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->json('columns')->default(json_encode(['id', 'updated_at', 'created_at']));
             $table->integer('jumlah_atribut')->default(0);
             $table->integer('jumlah')->default(0);
             $table->timestamps();

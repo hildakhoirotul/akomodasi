@@ -14,6 +14,7 @@ class Fasilitas extends Model
 
     protected $fillable = [
         'name',
+        'columns',
         'jumlah_atribut',
         'jumlah',
     ];

@@ -2,6 +2,12 @@
 
 @section('content')
 <main id="main" class="main">
+    <div class="search-bar">
+        <div class="search-form d-flex align-items-center">
+            <input type="text" name="query" id="searchTable" placeholder="Search" title="Enter search keyword">
+            <button type="button" title="Search"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
     <div class="col-12">
         <div class="card recent-sales overflow-auto">
             <div class="card-body">
@@ -64,7 +70,7 @@
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tableBody">
                         @php $i=1 @endphp
                         @foreach($list as $l)
                         <tr>
@@ -181,6 +187,21 @@
                 form.submit();
             }
         });
+    }
+</script>
+<script>
+    document.getElementById('searchTable').addEventListener('input', function() {
+        filterData();
+    });
+
+    function filterData() {
+        const selected = document.getElementById('searchTable').value;
+
+        fetch(`{{ route('search.table') }}?table=${selected}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('tableBody').innerHTML = data;
+            });
     }
 </script>
 @endsection

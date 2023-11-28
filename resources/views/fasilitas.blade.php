@@ -2,8 +2,14 @@
 
 @section('content')
 <main id="main" class="main">
+    <div class="search-bar">
+        <div class="search-form d-flex align-items-center">
+            <input type="text" name="query" id="searchData" placeholder="Search" title="Enter search keyword">
+            <button type="button" title="Search"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
     <div class="col-12">
-        <div class="card recent-sales overflow-auto">
+        <div class="card recent-sales">
             <div class="card-body">
                 <h5 class="card-title">{{ $fasilitas->name }} &nbsp<span>| GA Section</span></h5>
                 <div class="d-flex justify-content-between table-header">
@@ -23,6 +29,15 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        @if($hasBooleanColumn)
+                        <div class="dropdown me-2">
+                            <select id="jenis" name="jenis" class="form-control filter-jenis" style="height: 34px;padding: 5px;font-size: 12px;">
+                                <option value="">OK/NOT OK</option>
+                                <option value="1">OK</option>
+                                <option value="false">NOT OK</option>
+                            </select>
+                        </div>
+                        @endif
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addColumn"><i class="bi bi-plus-lg"></i>&nbsp Tambah Kolom</button>
                         <!-- <button type="button" class="btn btn-danger"><i class="bi bi-x-circle"></i>&nbsp Hapus Kolom</button> -->
                         <div class="btn-group">
@@ -164,7 +179,7 @@
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="dataBody">
                         @foreach($tabel as $key => $row)
                         <tr>
                             <td>{{ $key + 1 }}</td>
@@ -432,6 +447,26 @@
                 if (willDelete.isConfirmed) {
                     form.submit();
                 }
+            });
+    }
+</script>
+<script>
+    document.getElementById('searchData').addEventListener('input', function() {
+        filterData();
+    });
+
+    document.getElementById('jenis').addEventListener('change', function() {
+        filterData();
+    });
+
+    function filterData() {
+        const selected = document.getElementById('searchData').value;
+        const selectedJenis = document.getElementById('jenis').value;
+
+        fetch(`{{ route('search.data', $nama_tabel) }}?data=${selected}&jenis=${selectedJenis}`)
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('dataBody').innerHTML = data;
             });
     }
 </script>

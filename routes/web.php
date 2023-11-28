@@ -39,4 +39,8 @@ Route::controller(HomeController::class)->group(function () {
     Route::get('/export-data/{nama_tabel}', 'exportDataColumn')->name('export.data');
     Route::get('/export-template/{nama_tabel}', 'exportTemplateColumn')->name('export.template');
     Route::delete('/reset-data/{nama_tabel}', 'resetDataColumn')->name('reset.data');
+    Route::get('/search-table', 'searchTable')->name('search.table');
+    Route::get('/search-data/{nama_tabel}', 'searchData')->name('search.data');
+    Route::get('/ganti-sandi', 'gantiSandi')->name('gantiSandi');
+    Route::post('/change-password', 'changePassword')->name('changePassword');
 });

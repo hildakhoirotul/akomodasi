@@ -2,7 +2,12 @@
 
 @section('content')
 <main id="main" class="main">
-
+    <div class="search-bar">
+        <form class="search-form d-flex align-items-center" method="POST" action="#">
+            <input type="text" name="query" id="searchHome" placeholder="Search" title="Enter search keyword">
+            <button type="button" title="Search"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
     <div class="pagetitle">
         <h1>Dashboard</h1>
         <nav>

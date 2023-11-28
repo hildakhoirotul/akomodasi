@@ -13,9 +13,12 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class HomeController extends Controller
 {
@@ -43,6 +46,8 @@ class HomeController extends Controller
     public function listFasilitas()
     {
         $list = Fasilitas::get();
+        // $fasilitas = Fasilitas::first();
+        // dd(json_decode($fasilitas->columns, true));
         return view('list', compact('list'));
     }
 
@@ -160,12 +165,15 @@ class HomeController extends Controller
 
         $columns = Schema::getColumnListing($nama_tabel);
         $columnTypes = [];
+        $hasBooleanColumn = false;
 
         foreach ($columns as $column) {
             $columnTypes[$column] = Schema::getColumnType($nama_tabel, $column);
         }
 
-        return view('fasilitas', compact('list', 'fasilitas', 'tabel', 'columns', 'nama_tabel', 'columnTypes'));
+        $hasBooleanColumn = in_array('boolean', $columnTypes);
+
+        return view('fasilitas', compact('list', 'fasilitas', 'tabel', 'columns', 'nama_tabel', 'columnTypes', 'hasBooleanColumn'));
     }
 
     public function addColumn(Request $request, $nama_tabel)
@@ -299,5 +307,131 @@ class HomeController extends Controller
     {
         DB::table($nama_tabel)->truncate();
         return redirect()->back();
+    }
+
+    public function searchTable(Request $request)
+    {
+        $searchTerm = $request->input('table');
+        $query = Fasilitas::query();
+
+        if ($searchTerm) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('jumlah_atribut', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('jumlah', 'LIKE', '%' . $searchTerm . '%')
+                // ->orWhere(function ($q) use ($searchTerm) {
+                //     $q->whereJsonContains('columns', $searchTerm)
+                //       ->orWhere('columns', 'LIKE', '%' . $searchTerm . '%');
+                // });
+                ->orWhere(function ($q) use ($searchTerm) {
+                    $q->whereRaw("LOWER(columns) LIKE ?", ['%' . strtolower($searchTerm) . '%']);
+                });
+        }
+
+        $result = $query->get();
+        return view('partial.list', ['result' => $result]);
+    }
+
+    public function searchData(Request $request, $nama_tabel)
+    {
+        $columns = Schema::getColumnListing($nama_tabel);
+        $columnTypes = [];
+
+        foreach ($columns as $column) {
+            $columnTypes[$column] = Schema::getColumnType($nama_tabel, $column);
+        }
+
+        $searchTerm = $request->input('data');
+        $jenis = $request->input('jenis');
+        $query = DB::table($nama_tabel);
+
+        if ($searchTerm) {
+            $query->where(function ($q) use ($searchTerm, $columns) {
+                foreach ($columns as $column) {
+                    if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at') {
+                        $q->orWhere($column, 'LIKE', '%' . $searchTerm . '%');
+                    }
+                }
+            });
+        }
+
+        if ($jenis) {
+            $booleanColumn = $this->getBooleanColumn($nama_tabel);
+            $query->where($booleanColumn, '=', $jenis);
+        }
+
+        // if ($searchTerm) {
+        //     $query->where(function ($q) use ($searchTerm, $columns, $nama_tabel) {
+        //         foreach ($columns as $column) {
+        //             if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at') {
+        //                 if ($this->isBooleanColumn($nama_tabel, $column)) {
+        //                     $q->orWhere(function ($inner) use ($column, $searchTerm) {
+        //                         $inner->where($column, '=', strtolower($searchTerm) === 'ok' ? 1 : 0)
+        //                             ->orWhere($column, '=', strtoupper($searchTerm) === 'OK' ? 1 : 0);
+        //                     });
+        //                 } else {
+        //                     $q->orWhere($column, 'LIKE', '%' . $searchTerm . '%');
+        //                 }
+        //             }
+        //         }
+        //     });
+        // }
+
+        $tabel = $query->get();
+
+        return view('partial.fasilitas', compact('tabel', 'columns', 'columnTypes', 'nama_tabel'));
+    }
+
+    private function getBooleanColumn($nama_tabel)
+    {
+        $columns = Schema::getColumnListing($nama_tabel);
+
+        foreach ($columns as $column) {
+            if ($this->isBooleanColumn($nama_tabel, $column)) {
+                return $column;
+            }
+        }
+
+        return '';
+    }
+
+    private function isBooleanColumn($tableName, $column)
+    {
+        $columnType = DB::getSchemaBuilder()->getColumnType($tableName, $column);
+        return $columnType === 'boolean' || $columnType === 'tinyint(1)';
+    }
+
+    public function gantiSandi()
+    {
+        return response()->view('auth.change');
+    }
+
+    public function changePassword(Request $request)
+    {
+        $request->validate([
+            'password_lama' => 'required|string|min:6',
+            'password_baru' => 'required|string|min:6',
+            'password_confirm' => 'required|string|min:6'
+        ]);
+
+        if (!(Hash::check($request->get('password_lama'), Auth::user()->password))) {
+            Alert::error('Gagal', 'Password lama salah')->persistent(true, false);
+            return redirect()->back();
+        }
+
+        if (strcmp($request->get('password_lama'), $request->get('password_baru')) == 0) {
+            Alert::error('Gagal', 'Password baru tidak boleh sama dengan Password lama')->persistent(true, false);
+            return redirect()->back();
+        }
+        if (strcmp($request->get('password_baru'), $request->get('password_confirm')) !== 0) {
+            Alert::error('Gagal', 'Password baru harus sama dengan Konfirmasi password')->persistent(true, false);
+            return redirect()->back();
+        }
+        $user = Auth::user();
+        $user->password = bcrypt($request->get('password_baru'));
+        $user->save();
+        Auth::logout();
+
+        Alert::success('Password berhasil diubah', 'Silahkan Login kembali');
+        return redirect()->route('login')->with('logout', true);
     }
 }

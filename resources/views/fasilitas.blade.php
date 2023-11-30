@@ -29,7 +29,7 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        @if($hasBooleanColumn)
+                        <!-- @if($hasBooleanColumn)
                         <div class="dropdown me-2">
                             <select id="jenis" name="jenis" class="form-control filter-jenis" style="height: 34px;padding: 5px;font-size: 12px;">
                                 <option value="">OK/NOT OK</option>
@@ -37,11 +37,11 @@
                                 <option value="false">NOT OK</option>
                             </select>
                         </div>
-                        @endif
+                        @endif -->
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addColumn"><i class="bi bi-plus-lg"></i>&nbsp Tambah Kolom</button>
                         <!-- <button type="button" class="btn btn-danger"><i class="bi bi-x-circle"></i>&nbsp Hapus Kolom</button> -->
                         <div class="btn-group">
-                            <button class="btn btn-danger" type="button" id="deleteColumn">
+                            <button class="btn btn-danger" data-intro="ini adalah grup tombol" data-step="1" type="button" id="deleteColumn">
                                 <i class="bi bi-x-circle"></i>&nbsp Hapus Kolom
                             </button>
                             <button type="button" class="btn btn-danger dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
@@ -169,7 +169,7 @@
 
                 <table class="table table-hover table-responsive">
                     <thead>
-                        <tr>
+                        <tr class="align-middle">
                             <th>No</th>
                             @foreach($columns as $c)
                             @if ($c !== 'id' && $c !== 'created_at' && $c !== 'updated_at')
@@ -264,10 +264,14 @@
                 </table>
 
             </div>
-
+            <div class="d-flex justify-content-center mt-3" id="paging">
+                {{ $tabel->links()}}
+            </div>
         </div>
     </div>
 </main>
+
+<!-- Tambahkan script Intro.js -->
 
 <script>
     var formContainer = document.getElementById('formContainer');
@@ -381,7 +385,7 @@
                         var url = "{{ route('delete.column', $nama_tabel) }}";
 
                         fetch(url, {
-                                method: 'POST',
+                                method: 'DELETE',
                                 headers: {
                                     'Content-Type': 'application/json',
                                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
@@ -455,15 +459,10 @@
         filterData();
     });
 
-    document.getElementById('jenis').addEventListener('change', function() {
-        filterData();
-    });
-
     function filterData() {
         const selected = document.getElementById('searchData').value;
-        const selectedJenis = document.getElementById('jenis').value;
 
-        fetch(`{{ route('search.data', $nama_tabel) }}?data=${selected}&jenis=${selectedJenis}`)
+        fetch(`{{ route('search.data', $nama_tabel) }}?data=${selected}`)
             .then(response => response.text())
             .then(data => {
                 document.getElementById('dataBody').innerHTML = data;

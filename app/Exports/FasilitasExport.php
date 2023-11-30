@@ -30,6 +30,7 @@ class FasilitasExport implements FromArray, WithHeadings, WithMapping, WithStyle
     {
         return [
             'Nama Properti',
+            'Daftar Kolom',
             'Jumlah Atribut',
             'Jumlah',
         ];
@@ -46,6 +47,7 @@ class FasilitasExport implements FromArray, WithHeadings, WithMapping, WithStyle
     {
         return [
             $row['name'],
+            implode(',', json_decode($row['columns'], true)),
             strval($row['jumlah_atribut']),
             strval($row['jumlah']),
         ];

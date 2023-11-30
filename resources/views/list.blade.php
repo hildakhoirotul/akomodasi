@@ -12,14 +12,18 @@
         <div class="card recent-sales overflow-auto">
             <div class="card-body">
                 <h5 class="card-title">Daftar Properti<span>| GA Section</span></h5>
-                <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
-                    <button type="button" class="btn btn-primary" id="addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
-                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importExcel"><i class="bi bi-upload"></i>&nbsp Unggah</button>
-                    <a href="{{ route('export.fasilitas') }}" class="btn btn-primary" role="button"><i class="bi bi-download"></i>&nbsp; Unduh</a>
-                    <!-- <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('export.fasilitas') }}'"><i class="bi bi-download"></i>&nbsp Unduh</button> -->
-                    <button type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i>&nbsp Update</button>
-                    <button type="button" class="btn btn-primary" onclick="showDeleteConfirmation(event, this)"><i class="bi bi-trash"></i>&nbsp Reset</button>
-                </div>
+                <form action="{{ route('reset.fasilitas') }}" method="POST">
+                    <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-primary" id="addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importExcel"><i class="bi bi-upload"></i>&nbsp Unggah</button>
+                        <a href="{{ route('export.fasilitas') }}" class="btn btn-primary" role="button"><i class="bi bi-download"></i>&nbsp; Unduh</a>
+                        <!-- <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('export.fasilitas') }}'"><i class="bi bi-download"></i>&nbsp Unduh</button> -->
+                        <button type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i>&nbsp Update</button>
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn btn-primary" onclick="showDeleteConfirmation(event, this)"><i class="bi bi-trash"></i>&nbsp Reset</button>
+                    </div>
+                </form>
 
                 <!-- FORM TAMBAH DATA  -->
                 <form action="{{ route('simpan.data.tabel') }}" method="POST" id="formAddData" class="d-none">
@@ -65,8 +69,8 @@
                             <th scope="col">No</th>
                             <th scope="col">Nama Properti</th>
                             <th scope="col">Daftar Kolom</th>
-                            <th scope="col">Jumlah Atribut</th>
-                            <th scope="col">Jumlah</th>
+                            <th scope="col">Jumlah Kolom</th>
+                            <th scope="col">Jumlah Data</th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -92,7 +96,9 @@
                 </table>
 
             </div>
-
+            <div class="d-flex justify-content-center mt-3" id="paging">
+                {{ $list->links()}}
+            </div>
         </div>
     </div>
 </main>
@@ -163,9 +169,7 @@
             })
             .then((willDelete) => {
                 if (willDelete.isConfirmed) {
-                    $.get("{{ url('reset-properti') }}", function(data) {
-                        location.reload();
-                    });
+                    form.submit();
                 }
             });
     }

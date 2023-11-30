@@ -8,6 +8,7 @@ use App\Exports\TemplateExport;
 use App\Imports\DataImport;
 use App\Jobs\DataImportJob;
 use App\Jobs\FasilitasImportJob;
+use App\Models\Activity;
 use App\Models\Fasilitas;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
@@ -40,14 +41,59 @@ class HomeController extends Controller
     public function index()
     {
         $list = Fasilitas::get();
-        return view('home', compact('list'));
+        $activity = Activity::orderBy('created_at', 'desc')->take(10)->get();
+        $latest = Activity::whereNotNull('tabel')->latest()->take(2)->get();
+
+        $latest = Activity::selectRaw('MAX(id) as id, tabel, MAX(created_at) as created_at')
+            ->whereNotNull('tabel')
+            ->groupBy('tabel')
+            ->orderBy('created_at', 'desc')
+            ->take(2)
+            ->get();
+
+        $tableCounts = [];
+        $trueCount = [];
+        $falseCount = [];
+        $totalFalse = [];
+        $totalTrue = [];
+        foreach ($latest as $item) {
+            $tableName = $item->tabel;
+            $tableCounts[$tableName] = DB::table($tableName)->count();
+
+            $booleanColumns = $this->getBooleanColumn($tableName);
+            if (!empty($booleanColumns)) {
+                foreach ($booleanColumns as $columnName) {
+                    if (!isset($falseCount[$tableName][$columnName])) {
+                        $falseCount[$tableName][$columnName] = 0;
+                    }
+
+                    $falseCount[$tableName][$columnName] += DB::table($tableName)
+                        ->where($columnName, 0)
+                        ->count();
+                }
+
+                $trueCount[$tableName] = $tableCounts[$tableName] - array_sum($falseCount[$tableName]);
+                $totalFalse[$tableName] = array_sum($falseCount[$tableName]);
+                $totalTrue[$tableName] = $tableCounts[$tableName] - $totalFalse[$tableName];
+            }
+        }
+        return view('home', compact('list', 'activity', 'latest', 'tableCounts', 'totalFalse', 'totalTrue'));
     }
 
     public function listFasilitas()
     {
-        $list = Fasilitas::get();
-        // $fasilitas = Fasilitas::first();
-        // dd(json_decode($fasilitas->columns, true));
+        $list = Fasilitas::paginate(50);
+
+        foreach ($list as $fasilitas) {
+            $tableName = str_replace(' ', '_', strtolower($fasilitas->name));
+            $jumlahAtribut = count(json_decode($fasilitas->columns, true));
+            $jumlahData = DB::table($tableName)->count();
+
+            $fasilitas->jumlah_atribut = $jumlahAtribut;
+            $fasilitas->jumlah = $jumlahData;
+            $fasilitas->save();
+        }
+
         return view('list', compact('list'));
     }
 
@@ -84,6 +130,8 @@ class HomeController extends Controller
 
         $namaTabel = str_replace(' ', '_', strtolower($tabel));
         DB::statement("DROP TABLE $namaTabel");
+        DB::table('activities')->where('tabel', $namaTabel)->update(['tabel' => null]);
+
         return redirect()->back();
     }
 
@@ -161,7 +209,7 @@ class HomeController extends Controller
         $fasilitas = Fasilitas::where('name', 'LIKE', '%' . $nama_tabel . '%')->first();
 
         $queryBuilder = DB::table($nama_tabel);
-        $tabel = $queryBuilder->get();
+        $tabel = $queryBuilder->paginate(50);
 
         $columns = Schema::getColumnListing($nama_tabel);
         $columnTypes = [];
@@ -211,13 +259,11 @@ class HomeController extends Controller
         // dd($fasilitas);
         $currentColumns = json_decode($fasilitas->columns, true);
 
-        // Hapus kolom yang diinginkan
         $index = array_search($column, $currentColumns);
         if ($index !== false) {
             unset($currentColumns[$index]);
         }
 
-        // Simpan kembali data terbaru ke kolom 'columns'
         $fasilitas->columns = json_encode($currentColumns);
         $fasilitas->save();
 
@@ -341,7 +387,7 @@ class HomeController extends Controller
         }
 
         $searchTerm = $request->input('data');
-        $jenis = $request->input('jenis');
+        // $jenis = $request->input('jenis');
         $query = DB::table($nama_tabel);
 
         if ($searchTerm) {
@@ -354,10 +400,10 @@ class HomeController extends Controller
             });
         }
 
-        if ($jenis) {
-            $booleanColumn = $this->getBooleanColumn($nama_tabel);
-            $query->where($booleanColumn, '=', $jenis);
-        }
+        // if ($jenis) {
+        //     $booleanColumn = $this->getBooleanColumn($nama_tabel);
+        //     $query->where($booleanColumn, '=', $jenis);
+        // }
 
         // if ($searchTerm) {
         //     $query->where(function ($q) use ($searchTerm, $columns, $nama_tabel) {
@@ -384,14 +430,15 @@ class HomeController extends Controller
     private function getBooleanColumn($nama_tabel)
     {
         $columns = Schema::getColumnListing($nama_tabel);
+        $booleanColumns = [];
 
         foreach ($columns as $column) {
             if ($this->isBooleanColumn($nama_tabel, $column)) {
-                return $column;
+                $booleanColumns[] = $column;
             }
         }
 
-        return '';
+        return $booleanColumns;
     }
 
     private function isBooleanColumn($tableName, $column)
@@ -400,12 +447,12 @@ class HomeController extends Controller
         return $columnType === 'boolean' || $columnType === 'tinyint(1)';
     }
 
-    public function gantiSandi()
+    public function changePassword()
     {
         return response()->view('auth.change');
     }
 
-    public function changePassword(Request $request)
+    public function gantiSandi(Request $request)
     {
         $request->validate([
             'password_lama' => 'required|string|min:6',

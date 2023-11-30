@@ -725,7 +725,7 @@ h6 {
   color: #4154f1;
 }
 
-.sidebar-nav .nav-link .bi-chevron-down {
+.sidebar-nav .nav-link .bi.bi-chevron-down {
   margin-right: 0;
   transition: transform 0.2s ease-in-out;
 }

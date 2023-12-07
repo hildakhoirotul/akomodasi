@@ -195,11 +195,15 @@
                         <button type="button" title="Search"><i class="bi bi-search"></i></button>
                     </form>
                 </div> -->
+                @if(Auth::user()->is_admin === 0)
+                <li class="nav-item d-block me-4"><span class="badge bg-transparent border-primary text-primary">Guest Mode</span></li>
+                @endif
                 <li class="nav-item d-block">
                     <a class="nav-link nav-icon search-bar-toggle " href="#">
                         <i class="bi bi-search"></i>
                     </a>
                 </li>
+                @if(Auth::user()->is_admin)
                 <li class="nav-item dropdown pe-3">
 
                     <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
@@ -259,7 +263,16 @@
 
                     </ul><!-- End Profile Dropdown Items -->
                 </li><!-- End Profile Nav -->
-
+                @else
+                <a href="{{ route('logout') }}" class="btn btn-outline-primary me-4" onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                    <i class="bi bi-box-arrow-right"></i>&nbsp; Login
+                    <!-- <img src="{{ asset('assets/img/user.png') }}" alt="Profile" class="rounded-circle"> Login -->
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    @csrf
+                </form>
+                @endif
             </ul>
         </nav><!-- End Icons Navigation -->
 
@@ -269,33 +282,67 @@
     <aside id="sidebar" class="sidebar">
 
         <ul class="sidebar-nav" id="sidebar-nav">
-
+            @if(Auth::user()->is_admin === 0)
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{{ route('home') }}">
+                <a class="nav-link{{ Route::is('home.guest') ? ' active' : '' }}" href="{{ route('home.guest') }}">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" href="{{ route('list.fasilitas') }}">
+                <a class="nav-link{{ Route::is('list.fasilitas.guest') ? ' active' : '' }}" href="{{ route('list.fasilitas.guest') }}">
                     <i class="bi bi-layout-text-window-reverse"></i>
                     <span>Daftar Properti</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-                    <i class="bi bi-menu-button-wide"></i><span>Properti</span><i class="bi bi-chevron-down ms-auto"></i>
+                <a class="nav-link collapsed{{ Route::is('fasilitas.guest') ? ' active' : '' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-menu-button-wide"></i><span>Properti</span><i class="bi bi-chevron-up ms-auto"></i>
                 </a>
-                <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                <ul id="components-nav" class="nav-content collapse{{ Route::is('fasilitas.guest') ? ' show' : '' }}" data-bs-parent="#sidebar-nav">
                     @foreach($list as $l)
                     <li>
-                        <a href="{{ route('fasilitas', $l->formatted_table_name) }}" data-table-name="{{ $l->formatted_table_name }}">
+                        <a class="{{ Route::is('fasilitas.guest') && request()->segment(2) === $l->formatted_table_name ? ' active' : '' }}" href="{{ route('fasilitas.guest', $l->formatted_table_name) }}" data-table-name="{{ $l->formatted_table_name }}">
                             <i class="bi bi-circle"></i><span>{{ $l->name }}</span>
                         </a>
                     </li>
                     @endforeach
                 </ul>
             </li>
+            @else
+            <li class="nav-item">
+                <a class="nav-link{{ Route::is('home') ? ' active' : '' }}" href="{{ route('home') }}">
+                    <i class="bi bi-grid"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{{ Route::is('list.fasilitas') ? ' active' : '' }}" href="{{ route('list.fasilitas') }}">
+                    <i class="bi bi-layout-text-window-reverse"></i>
+                    <span>Daftar Properti</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed{{ Route::is('fasilitas') ? ' active' : '' }}" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+                    <i class="bi bi-menu-button-wide"></i><span>Properti</span><i class="bi bi-chevron-up ms-auto"></i>
+                </a>
+                <ul id="components-nav" class="nav-content collapse{{ Route::is('fasilitas') ? ' show' : '' }}" data-bs-parent="#sidebar-nav">
+                    @foreach($list as $l)
+                    <li>
+                        <a class="{{ Route::is('fasilitas') && request()->segment(2) === $l->formatted_table_name ? ' active' : '' }}" href="{{ route('fasilitas', $l->formatted_table_name) }}" data-table-name="{{ $l->formatted_table_name }}">
+                            <i class="bi bi-circle"></i><span>{{ $l->name }}</span>
+                        </a>
+                    </li>
+                    @endforeach
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link{{ Route::is('daftar.admin') ? ' active' : '' }}" href="{{ route('daftar.admin') }}">
+                    <i class="bi bi-people"></i>
+                    <span>Tambah Admin</span>
+                </a>
+            </li>
+            @endif
         </ul>
 
     </aside><!-- End Sidebar-->
@@ -319,44 +366,6 @@
     <script src="{{ asset('assets/js/main.js') }}"></script>
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intro.js/7.2.0/intro.min.js"></script>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let navLinks = document.querySelectorAll('.nav-link');
-            let componentsNav = document.getElementById('components-nav');
-
-            navLinks.forEach(function(navLink) {
-                navLink.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    navLinks.forEach(function(link) {
-                        link.classList.add('collapsed');
-                    });
-
-                    this.classList.remove('collapsed');
-
-                    localStorage.setItem('clickedNavLink', this.getAttribute('data-table-name'));
-                });
-            });
-
-            let clickedNavLink = localStorage.getItem('clickedNavLink');
-            console.log(clickedNavLink)
-            if (clickedNavLink) {
-                let activeLink = document.querySelector('.nav-link[data-table-name="' + clickedNavLink + '"]');
-                if (activeLink) {
-                    activeLink.classList.remove('collapsed');
-
-                    let parentCollapse = activeLink.closest('.collapse');
-                    if (parentCollapse) {
-                        parentCollapse.classList.add('show');
-                    }
-                }
-            }
-        });
-    </script>
-
-
-
-
 
 </body>
 

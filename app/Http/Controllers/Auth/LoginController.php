@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\Activity;
+use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\JsonResponse;
@@ -67,6 +68,14 @@ class LoginController extends Controller
             Alert::error('Login Gagal', 'NIK atau kata sandi salah!')->persistent(true, false);
             return redirect()->route('login');
         }
+    }
+
+    public function guestLogin()
+    {
+        $guest = User::where('is_admin', 0)->first();
+        Auth::login($guest);
+
+        return redirect()->route('home.guest');
     }
 
     public function logout(Request $request)

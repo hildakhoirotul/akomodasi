@@ -103,7 +103,7 @@
 </head>
 
 <body>
-@include('sweetalert::alert')
+    @include('sweetalert::alert')
 
     <main>
         <div class="container">
@@ -144,12 +144,7 @@
                                             <div class="invalid-feedback">Password harus diisi</div>
                                         </div>
 
-                                        <!-- <div class="col-12">
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="remember" value="true" id="rememberMe">
-                                                <label class="form-check-label" for="rememberMe">Remember me</label>
-                                            </div>
-                                        </div> -->
+
                                         <div class="col-12">
                                             <button class="btn btn-primary w-100" type="submit">Login</button>
                                         </div>
@@ -157,7 +152,9 @@
                                             <p class="small mb-0">Don't have account? <a href="pages-register.html">Create an account</a></p>
                                         </div> -->
                                     </form>
-
+                                    <div class="col-12 mt-2">
+                                        <a href="{{ url('/guest-login') }}"><span style="font-size: 14px; font-style: oblique;">Masuk sebagai tamu</span></a>
+                                    </div>
                                 </div>
                             </div>
 

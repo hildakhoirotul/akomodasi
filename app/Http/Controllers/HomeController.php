@@ -10,6 +10,7 @@ use App\Jobs\DataImportJob;
 use App\Jobs\FasilitasImportJob;
 use App\Models\Activity;
 use App\Models\Fasilitas;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -42,15 +43,17 @@ class HomeController extends Controller
     {
         $list = Fasilitas::get();
         $activity = Activity::orderBy('created_at', 'desc')->take(10)->get();
-        $latest = Activity::whereNotNull('tabel')->latest()->take(2)->get();
-
+        $latest = Activity::whereNotNull('tabel')->latest()->take(6)->get();
+        // dd($latest);
         $latest = Activity::selectRaw('MAX(id) as id, tabel, MAX(created_at) as created_at')
             ->whereNotNull('tabel')
+            ->where('tabel', '<>', 'users')
             ->groupBy('tabel')
             ->orderBy('created_at', 'desc')
-            ->take(2)
+            ->take(6)
             ->get();
 
+        // dd($latest);
         $tableCounts = [];
         $trueCount = [];
         $falseCount = [];
@@ -58,6 +61,9 @@ class HomeController extends Controller
         $totalTrue = [];
         foreach ($latest as $item) {
             $tableName = $item->tabel;
+            if ($tableName === 'users') {
+                continue;
+            }
             $tableCounts[$tableName] = DB::table($tableName)->count();
 
             $booleanColumns = $this->getBooleanColumn($tableName);
@@ -83,7 +89,6 @@ class HomeController extends Controller
     public function listFasilitas()
     {
         $list = Fasilitas::paginate(50);
-
         foreach ($list as $fasilitas) {
             $tableName = str_replace(' ', '_', strtolower($fasilitas->name));
             $jumlahAtribut = count(json_decode($fasilitas->columns, true));
@@ -480,5 +485,93 @@ class HomeController extends Controller
 
         Alert::success('Password berhasil diubah', 'Silahkan Login kembali');
         return redirect()->route('login')->with('logout', true);
+    }
+
+    public function daftarAdmin()
+    {
+        $admin = User::where('is_admin', 1)->get();
+        $list = Fasilitas::get();
+        // dd($admin);
+        return view('user', compact('admin', 'list'));
+    }
+
+    public function addAdmin(Request $request)
+    {
+        $request->validate([
+            'nik' => 'required',
+            'name' => 'required|string',
+            'password' => 'required',
+        ]);
+
+        $data = new User();
+        $data->nik = $request->nik;
+        $data->name = $request->name;
+        $data->chain = $request->password;
+        $data->password = Hash::make($request->password);
+        $data->save();
+
+        Alert::success('Berhasil', 'Data telah tersimpan.');
+        return redirect()->route('daftar.admin');
+    }
+
+    public function searchAdmin(Request $request)
+    {
+        $searchTerm = $request->input('search');
+        $query = User::query();
+        if ($searchTerm) {
+            $query->where('is_admin', 1)
+                ->where(function ($query) use ($searchTerm) {
+                    $query->where('nik', 'LIKE', '%' . $searchTerm . '%')
+                        ->orWhere('name', 'LIKE', '%' . $searchTerm . '%');
+                });
+        } else {
+            $query->where('is_admin', 1);
+        }
+
+        $data = $query->get();
+
+        return view('partial.user', ['data' => $data]);
+    }
+
+    public function editAdmin(Request $request, $id)
+    {
+        // $data = User::find($request->id);
+        // foreach ($request->newData as $fieldName => $fieldValue) {
+        //     if ($fieldName === 'chain') {
+        //         $data->chain = $fieldValue;
+        //         $data->password = Hash::make($fieldValue);
+        //     } else {
+        //         $data->{$fieldName} = $fieldValue;
+        //     }
+        // }
+
+        // $data->save();
+
+        $request->validate([
+            'nik' => 'required|string',
+            'name' => 'required|string',
+        ]);
+
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User not found');
+        }
+
+        $user->nik = $request->input('nik');
+        $user->name = $request->input('name');
+        $user->chain = $request->input('password');
+        $user->password = bcrypt($request->input('password'));
+
+        $user->save();
+
+        return redirect()->back();
+    }
+
+    public function deleteAdmin($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return redirect()->back();
     }
 }

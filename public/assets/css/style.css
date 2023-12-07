@@ -446,21 +446,21 @@ h6 {
   width: 100%;
 }
 
- .search-form input:focus,
- .search-form input:hover {
+.search-form input:focus,
+.search-form input:hover {
   outline: none;
   box-shadow: 0 0 10px 0 rgba(1, 41, 112, 0.15);
   border: 1px solid rgba(1, 41, 112, 0.3);
 }
 
- .search-form button {
+.search-form button {
   border: 0;
   padding: 0;
   margin-left: -30px;
   background: none;
 }
 
- .search-form button i {
+.search-form button i {
   color: #012970;
 }
 
@@ -487,7 +487,13 @@ h6 {
   color: #012970;
 }
 
-.header-nav .nav-profile img {
+.nav-item .text-primary {
+  color: #012970 !important;
+  font-size: 14px;
+}
+
+.header-nav .nav-profile img,
+.btn .rounded-circle {
   max-height: 50px;
 }
 
@@ -604,6 +610,18 @@ h6 {
   background-color: #f6f9ff;
 }
 
+.header-nav .btn-outline-primary:hover,
+.header-nav .btn-primary:active {
+  background-color: #012970;
+  border-color: #012970;
+  color: #fff;
+}
+
+.header-nav .btn-outline-primary {
+  border-color: #012970;
+  color: #012970;
+}
+
 /*--------------------------------------------------------------
 # Sidebar
 --------------------------------------------------------------*/
@@ -694,6 +712,13 @@ h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
+  transition: 0.3;
+  padding: 10px 15px;
+  border-radius: 4px;
+  color: #012970;
+}
+
+.sidebar-nav .nav-link.active {
   color: #4154f1;
   transition: 0.3;
   background: #f6f9ff;
@@ -704,7 +729,6 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
 }
 
 .sidebar-nav .nav-link.collapsed {
@@ -712,9 +736,9 @@ h6 {
   background: #fff;
 }
 
-.sidebar-nav .nav-link.collapsed i {
+/* .sidebar-nav .nav-link.collapsed i {
   color: #899bbd;
-}
+} */
 
 .sidebar-nav .nav-link:hover {
   color: #4154f1;
@@ -725,12 +749,13 @@ h6 {
   color: #4154f1;
 }
 
-.sidebar-nav .nav-link .bi.bi-chevron-down {
+.sidebar-nav .nav-link .bi.bi-chevron-up {
   margin-right: 0;
   transition: transform 0.2s ease-in-out;
 }
 
-.sidebar-nav .nav-link:not(.collapsed) .bi-chevron-down {
+.sidebar-nav .nav-link.collapsed .bi-chevron-up,
+.sidebar-nav .nav-link.active.collapsed .bi-chevron-up {
   transform: rotate(180deg);
 }
 
@@ -756,6 +781,7 @@ h6 {
   margin-right: 8px;
   line-height: 0;
   border-radius: 50%;
+  color: #012970;
 }
 
 .sidebar-nav .nav-content a:hover,
@@ -1305,4 +1331,21 @@ button.btn-close[data-bs-dismiss="modal"] {
 .btn-group .btn-danger {
   height: 33px;
   font-size: 13px;
+}
+
+.password-container {
+  position: relative;
+}
+
+.password-text {
+  display: inline-block;
+  border: none;
+  background-color: transparent;
+  text-align: center;
+}
+
+.toggle-password-icon {
+  position: absolute;
+  /* top: 50%; */
+  cursor: pointer;
 }

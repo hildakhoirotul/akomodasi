@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GuestController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -20,8 +21,9 @@ Route::get('/', function () {
 });
 
 Auth::routes();
+Route::get('/guest-login', [App\Http\Controllers\Auth\LoginController::class, 'guestLogin'])->name('guest.login');
 
-Route::controller(HomeController::class)->middleware(['web', 'activity'])->group(function () {
+Route::controller(HomeController::class)->middleware(['web', 'activity', 'is_admin'])->group(function () {
     Route::get('/home', 'index')->name('home');
     Route::get('/daftar-fasilitas', 'listFasilitas')->name('list.fasilitas');
     Route::get('/fasilitas/{nama_tabel}', 'fasilitas')->name('fasilitas');
@@ -43,4 +45,19 @@ Route::controller(HomeController::class)->middleware(['web', 'activity'])->group
     Route::get('/search-data/{nama_tabel}', 'searchData')->name('search.data');
     Route::get('/change-password', 'changePassword')->name('gantiSandi');
     Route::post('/ganti-sandi', 'gantiSandi')->name('changePassword');
+    Route::get('/daftar-admin', 'daftarAdmin')->name('daftar.admin');
+    Route::post('/tambah-admin', 'addAdmin')->name('add.admin');
+    Route::get('/search-admin', 'searchAdmin')->name('search.admin');
+    Route::post('/edit-/users/{id}', 'editAdmin')->name('edit.admin');
+    Route::delete('/hapus-admin/{id}', 'deleteAdmin')->name('delete.admin');
 });
+
+Route::controller(GuestController::class)->middleware('is_guest')->group(function () {
+    Route::get('/home/guest-mode', 'indexForGuest')->name('home.guest');
+    Route::get('/daftar-fasilitas/guest-mode', 'listFasilitas')->name('list.fasilitas.guest');
+    Route::get('/fasilitas/{nama_tabel}/guest-mode', 'fasilitas')->name('fasilitas.guest');
+    Route::get('/search-table/guest-mode', 'searchTable')->name('search.table.guest');
+    Route::get('/search-data/{nama_tabel}/guest-mode', 'searchData')->name('search.data.guest');
+});
+
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('is_user')->name('home');

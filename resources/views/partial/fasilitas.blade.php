@@ -16,6 +16,7 @@
     </td>
     @endif
     @endforeach
+    @if(Auth::user()->is_admin)
     <td>
         <form action="{{ route('delete.data', [$nama_tabel, $row->id]) }}" method="POST" style="display: inline-block;">
             <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -76,5 +77,6 @@
         </div>
 
     </td>
+    @endif
 </tr>
 @endforeach

@@ -12,6 +12,7 @@
         <div class="card recent-sales">
             <div class="card-body">
                 <h5 class="card-title">{{ $fasilitas->name }} &nbsp<span>| GA Section</span></h5>
+                @if(Auth::user()->is_admin)
                 <div class="d-flex justify-content-between table-header">
                     <form action="{{ route('reset.data', $nama_tabel) }}" method="POST" style="display: inline-block;">
                         <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
@@ -57,6 +58,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="modal fade" id="addColumn" tabindex="-1" role="dialog" aria-labelledby="importExcelLabel" aria-hidden="true" data-backdrop="false">
                     <div class="modal-dialog" role="document">
@@ -176,7 +178,9 @@
                             <th scope="col">{{ $c }}</th>
                             @endif
                             @endforeach
+                            @if(Auth::user()->is_admin)
                             <th>Action</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody id="dataBody">
@@ -198,6 +202,7 @@
                             </td>
                             @endif
                             @endforeach
+                            @if(Auth::user()->is_admin)
                             <td>
                                 <form action="{{ route('delete.data', [$nama_tabel, $row->id]) }}" method="POST" style="display: inline-block;">
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -258,6 +263,7 @@
                                 </div>
 
                             </td>
+                            @endif
                         </tr>
                         @endforeach
                     </tbody>
@@ -455,6 +461,8 @@
     }
 </script>
 <script>
+    const userRole = @json(Auth::check() ? Auth::user()-> is_admin : 0);
+    console.log(userRole)
     document.getElementById('searchData').addEventListener('input', function() {
         filterData();
     });
@@ -462,7 +470,11 @@
     function filterData() {
         const selected = document.getElementById('searchData').value;
 
-        fetch(`{{ route('search.data', $nama_tabel) }}?data=${selected}`)
+        const route = userRole === 1
+            ? `{{ route('search.data', $nama_tabel) }}?data=${selected}`
+            : `{{ route('search.data.guest', $nama_tabel) }}?data=${selected}`;
+
+        fetch(route)
             .then(response => response.text())
             .then(data => {
                 document.getElementById('dataBody').innerHTML = data;

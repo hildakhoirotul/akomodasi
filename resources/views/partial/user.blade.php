@@ -4,6 +4,7 @@
     <th>{{ $i++ }}</th>
     <td>{{ $a->nik }}</td>
     <td>{{ $a->name }}</td>
+    <td>{{ $a->role }}</td>
     <td>
         <div class="password-container">
             <input type="password" class="password-text" data-chain="{{ $a->chain }}" value="{{ $a->chain }}" readonly>

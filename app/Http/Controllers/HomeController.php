@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Exports\DataExport;
 use App\Exports\FasilitasExport;
 use App\Exports\TemplateExport;
-use App\Imports\DataImport;
 use App\Jobs\DataImportJob;
 use App\Jobs\FasilitasImportJob;
 use App\Models\Activity;
 use App\Models\Fasilitas;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -44,7 +42,6 @@ class HomeController extends Controller
         $list = Fasilitas::get();
         $activity = Activity::orderBy('created_at', 'desc')->take(10)->get();
         $latest = Activity::whereNotNull('tabel')->latest()->take(6)->get();
-        // dd($latest);
         $latest = Activity::selectRaw('MAX(id) as id, tabel, MAX(created_at) as created_at')
             ->whereNotNull('tabel')
             ->where('tabel', '<>', 'users')
@@ -52,8 +49,6 @@ class HomeController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(6)
             ->get();
-
-        // dd($latest);
         $tableCounts = [];
         $trueCount = [];
         $falseCount = [];
@@ -91,7 +86,9 @@ class HomeController extends Controller
         $list = Fasilitas::paginate(50);
         foreach ($list as $fasilitas) {
             $tableName = str_replace(' ', '_', strtolower($fasilitas->name));
-            $jumlahAtribut = count(json_decode($fasilitas->columns, true));
+            // $jumlahAtribut = count(json_decode($fasilitas->columns, true));
+            $decodedColumns = json_decode($fasilitas->columns, true);
+            $jumlahAtribut = is_array($decodedColumns) ? count($decodedColumns) : 0;
             $jumlahData = DB::table($tableName)->count();
 
             $fasilitas->jumlah_atribut = $jumlahAtribut;
@@ -119,10 +116,6 @@ class HomeController extends Controller
                 $table->id();
                 $table->timestamps();
             });
-
-            // Artisan::call('make:model', [
-            //     'name' => ucfirst($namaTabel),
-            // ]);
         }
         Artisan::call('migrate');
 
@@ -173,10 +166,6 @@ class HomeController extends Controller
                 $table->id();
                 $table->timestamps();
             });
-
-            // Artisan::call('make:model', [
-            //     'name' => ucfirst($data),
-            // ]);
         }
 
         Artisan::call('migrate');
@@ -211,7 +200,7 @@ class HomeController extends Controller
     public function fasilitas($nama_tabel)
     {
         $list = Fasilitas::get();
-        $fasilitas = Fasilitas::where('name', 'LIKE', '%' . $nama_tabel . '%')->first();
+        $fasilitas = strtoupper(str_replace('_', ' ', $nama_tabel));
 
         $queryBuilder = DB::table($nama_tabel);
         $tabel = $queryBuilder->paginate(50);
@@ -261,7 +250,6 @@ class HomeController extends Controller
         $column = $request->input('column');
 
         $fasilitas = Fasilitas::where('name', 'LIKE', '%' . $nama_tabel . '%')->first();
-        // dd($fasilitas);
         $currentColumns = json_decode($fasilitas->columns, true);
 
         $index = array_search($column, $currentColumns);
@@ -282,7 +270,6 @@ class HomeController extends Controller
     public function tambahData(Request $request, $nama_tabel)
     {
         $inputData = $request->all();
-        // dd($inputData);
         unset($inputData['_token']);
 
         foreach ($inputData as $key => $value) {
@@ -290,9 +277,6 @@ class HomeController extends Controller
             unset($inputData[$key]);
             $inputData[$normalizedKey] = $value;
         }
-
-        // dd($inputData);
-
         DB::table($nama_tabel)->insert($inputData);
         return redirect()->back();
     }
@@ -329,7 +313,6 @@ class HomeController extends Controller
     {
         $table = Fasilitas::where('name', 'LIKE', '%' . $nama_tabel . '%')->first();
         $columns = json_decode($table->columns, true);
-        // $column = Schema::getColumnListing($nama_tabel);
         $file = $request->file('file');
         $this->validate($request, [
             'file' => 'required|mimes:csv,xls,xlsx'
@@ -338,9 +321,6 @@ class HomeController extends Controller
         $nama_file = rand() . $file->getClientOriginalName();
         $path = $file->storeAs('public/excel/', $nama_file);
         DataImportJob::dispatch($path, $nama_tabel, $columns)->onQueue('impor_data');
-
-        // Excel::import(new DataImport($nama_tabel, $columns), $file);
-
         return redirect()->back();
     }
 
@@ -369,10 +349,6 @@ class HomeController extends Controller
             $query->where('name', 'LIKE', '%' . $searchTerm . '%')
                 ->orWhere('jumlah_atribut', 'LIKE', '%' . $searchTerm . '%')
                 ->orWhere('jumlah', 'LIKE', '%' . $searchTerm . '%')
-                // ->orWhere(function ($q) use ($searchTerm) {
-                //     $q->whereJsonContains('columns', $searchTerm)
-                //       ->orWhere('columns', 'LIKE', '%' . $searchTerm . '%');
-                // });
                 ->orWhere(function ($q) use ($searchTerm) {
                     $q->whereRaw("LOWER(columns) LIKE ?", ['%' . strtolower($searchTerm) . '%']);
                 });
@@ -392,7 +368,6 @@ class HomeController extends Controller
         }
 
         $searchTerm = $request->input('data');
-        // $jenis = $request->input('jenis');
         $query = DB::table($nama_tabel);
 
         if ($searchTerm) {
@@ -404,29 +379,6 @@ class HomeController extends Controller
                 }
             });
         }
-
-        // if ($jenis) {
-        //     $booleanColumn = $this->getBooleanColumn($nama_tabel);
-        //     $query->where($booleanColumn, '=', $jenis);
-        // }
-
-        // if ($searchTerm) {
-        //     $query->where(function ($q) use ($searchTerm, $columns, $nama_tabel) {
-        //         foreach ($columns as $column) {
-        //             if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at') {
-        //                 if ($this->isBooleanColumn($nama_tabel, $column)) {
-        //                     $q->orWhere(function ($inner) use ($column, $searchTerm) {
-        //                         $inner->where($column, '=', strtolower($searchTerm) === 'ok' ? 1 : 0)
-        //                             ->orWhere($column, '=', strtoupper($searchTerm) === 'OK' ? 1 : 0);
-        //                     });
-        //                 } else {
-        //                     $q->orWhere($column, 'LIKE', '%' . $searchTerm . '%');
-        //                 }
-        //             }
-        //         }
-        //     });
-        // }
-
         $tabel = $query->get();
 
         return view('partial.fasilitas', compact('tabel', 'columns', 'columnTypes', 'nama_tabel'));
@@ -489,9 +441,8 @@ class HomeController extends Controller
 
     public function daftarAdmin()
     {
-        $admin = User::where('is_admin', 1)->get();
+        $admin = User::where('role', '<>', 'guest')->get();
         $list = Fasilitas::get();
-        // dd($admin);
         return view('user', compact('admin', 'list'));
     }
 
@@ -500,12 +451,14 @@ class HomeController extends Controller
         $request->validate([
             'nik' => 'required',
             'name' => 'required|string',
+            'role' => 'required|string',
             'password' => 'required',
         ]);
 
         $data = new User();
         $data->nik = $request->nik;
         $data->name = $request->name;
+        $data->role = $request->role;
         $data->chain = $request->password;
         $data->password = Hash::make($request->password);
         $data->save();
@@ -519,13 +472,13 @@ class HomeController extends Controller
         $searchTerm = $request->input('search');
         $query = User::query();
         if ($searchTerm) {
-            $query->where('is_admin', 1)
+            $query->where('role', '<>', 'guest')
                 ->where(function ($query) use ($searchTerm) {
                     $query->where('nik', 'LIKE', '%' . $searchTerm . '%')
                         ->orWhere('name', 'LIKE', '%' . $searchTerm . '%');
                 });
         } else {
-            $query->where('is_admin', 1);
+            $query->where('role', '<>', 'guest');
         }
 
         $data = $query->get();
@@ -535,18 +488,6 @@ class HomeController extends Controller
 
     public function editAdmin(Request $request, $id)
     {
-        // $data = User::find($request->id);
-        // foreach ($request->newData as $fieldName => $fieldValue) {
-        //     if ($fieldName === 'chain') {
-        //         $data->chain = $fieldValue;
-        //         $data->password = Hash::make($fieldValue);
-        //     } else {
-        //         $data->{$fieldName} = $fieldValue;
-        //     }
-        // }
-
-        // $data->save();
-
         $request->validate([
             'nik' => 'required|string',
             'name' => 'required|string',
@@ -560,6 +501,7 @@ class HomeController extends Controller
 
         $user->nik = $request->input('nik');
         $user->name = $request->input('name');
+        $user->role = $request->input('role');
         $user->chain = $request->input('password');
         $user->password = bcrypt($request->input('password'));
 

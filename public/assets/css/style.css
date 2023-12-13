@@ -53,9 +53,9 @@ h6 {
 }
 
 .pagetitle h1 {
-  font-size: 24px;
+  font-size: 25px;
   margin-bottom: 0;
-  font-weight: 600;
+  font-weight: 700;
   color: #012970;
 }
 
@@ -210,7 +210,7 @@ h6 {
 
 /* Card */
 .card {
-  margin-bottom: 30px;
+  margin-bottom: 15px;
   border: none;
   border-radius: 5px;
   box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
@@ -225,11 +225,23 @@ h6 {
 }
 
 .card-title {
-  padding: 20px 0 15px 0;
+  padding: 0 0 10px 0;
   font-size: 18px;
   font-weight: 700;
   color: #012970;
   font-family: "Poppins", sans-serif;
+}
+
+.home.dashboard .card-title {
+  padding: 20px 0 15px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
+.inspektur .card-title {
+  padding: 20px 0 15px 0;
 }
 
 .card-title span {
@@ -238,8 +250,11 @@ h6 {
   font-weight: 400;
 }
 
-.card-body {
+.home.dashboard .card-body {
   padding: 0 20px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .card-img-overlay {
@@ -797,6 +812,65 @@ h6 {
 # Dashboard
 --------------------------------------------------------------*/
 /* Filter dropdown */
+section.inspektur {
+  margin-top: 50px;
+  padding: 30px 30px;
+}
+
+@media (max-width: 992px) {
+  section.inspektur {
+    padding: 30px 10px;
+  }
+}
+
+.dashboard .row {
+  --bs-gutter-x: 1rem;
+}
+
+.inspektur .card {
+  margin-bottom: 0px;
+}
+
+section.input-properti {
+  padding: 75px 10px 0px 10px;
+}
+
+.input-properti .card-body {
+  padding: 0px 20px 20px 20px;
+}
+
+.input-properti .badge {
+  transition: background-color 0.3s;
+  ;
+}
+
+.input-properti .badge:hover {
+  background-color: #4586ff !important;
+  color: #fff;
+}
+
+.inspektur .info-card {
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.inspektur-card {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.input-properti .card-title {
+  font-size: 22px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: 0;
+}
+
 .dashboard .filter {
   position: absolute;
   right: 0px;
@@ -834,9 +908,23 @@ h6 {
   padding: 8px 15px;
 }
 
+/* .dashboard .card {
+  margin-bottom: 20px;
+} */
 /* Info Cards */
 .dashboard .info-card {
+  /* padding-bottom: 10px; */
+  /* height: 100%; */
+  display: flex;
+  flex-direction: column;
+}
+
+.inspektur .info-card {
   padding-bottom: 10px;
+}
+
+.inspektur .card-body {
+  padding: 20px 20px 0 20px;
 }
 
 .dashboard .info-card h6 {
@@ -869,6 +957,11 @@ h6 {
 .dashboard .customers-card .card-icon {
   color: #ff771d;
   background: #ffecdf;
+}
+
+.dashboard .product-card .card-icon {
+  color: #ff1d1d;
+  background: #ffdfdf;
 }
 
 /* Activity */
@@ -1348,4 +1441,107 @@ button.btn-close[data-bs-dismiss="modal"] {
   position: absolute;
   /* top: 50%; */
   cursor: pointer;
+}
+
+.input-group-append {
+  position: absolute;
+  right: 15px;
+  top: 55%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+/*--------------------------------------------------------------
+# Features Section
+--------------------------------------------------------------*/
+.features .nav-tabs {
+  border: 0;
+}
+
+.features .nav-link {
+  border: 0;
+  padding: 25px 20px;
+  color: var(--color-secondary);
+  box-shadow: 5px 5px 25px rgba(var(--color-secondary-rgb), 0.15);
+  border-radius: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  transition: 0s;
+  cursor: pointer;
+  height: 100%;
+}
+
+.features .nav-link i {
+  font-size: 32px;
+  line-height: 0;
+}
+
+.features .nav-link h4 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 10px 0 0 0;
+  color: var(--color-secondary);
+}
+
+.features .nav-link:hover {
+  color: var(--color-primary);
+}
+
+.features .nav-link.active {
+  transition: 0.3s;
+  background: var(--color-secondary) linear-gradient(rgba(var(--color-primary-rgb), 0.95), rgba(var(--color-primary-rgb), 0.6));
+  border-color: var(--color-primary);
+}
+
+.features .nav-link.active h4 {
+  color: var(--color-white);
+}
+
+.features .nav-link.active i {
+  color: var(--color-white) !important;
+}
+
+.features .tab-content {
+  margin-top: 30px;
+}
+
+.features .tab-pane.active {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.features .tab-pane h3 {
+  font-weight: 600;
+  font-size: 36px;
+  color: var(--color-secondary);
+}
+
+.features .tab-pane ul {
+  list-style: none;
+  padding: 0;
+}
+
+.features .tab-pane ul li {
+  padding-bottom: 10px;
+}
+
+.features .tab-pane ul i {
+  font-size: 24px;
+  margin-right: 4px;
+  color: var(--color-primary);
+}
+
+.features .tab-pane p:last-child {
+  margin-bottom: 0;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

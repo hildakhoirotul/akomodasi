@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\GuestController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\InspekturController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -52,12 +53,20 @@ Route::controller(HomeController::class)->middleware(['web', 'activity', 'is_adm
     Route::delete('/hapus-admin/{id}', 'deleteAdmin')->name('delete.admin');
 });
 
-Route::controller(GuestController::class)->middleware('is_guest')->group(function () {
+Route::controller(GuestController::class)->middleware(['is_guest', 'activity'])->group(function () {
     Route::get('/home/guest-mode', 'indexForGuest')->name('home.guest');
     Route::get('/daftar-fasilitas/guest-mode', 'listFasilitas')->name('list.fasilitas.guest');
     Route::get('/fasilitas/{nama_tabel}/guest-mode', 'fasilitas')->name('fasilitas.guest');
     Route::get('/search-table/guest-mode', 'searchTable')->name('search.table.guest');
     Route::get('/search-data/{nama_tabel}/guest-mode', 'searchData')->name('search.data.guest');
+});
+
+Route::controller(InspekturController::class)->middleware(['is_inspektur', 'activity'])->group(function () {
+    Route::get('/inspektur-dashboard', 'index')->name('home.inspektur');
+    Route::get('/properti/{nama_tabel}', 'properti')->name('properti.inspektur');
+    Route::post('/menambah-data-di/{nama_tabel}', 'tambahData')->name('store.properti');
+    Route::get('/changePassword', 'changePassword')->name('ganti.password');
+    Route::post('/ganti-password', 'gantiSandi')->name('change.password');
 });
 
 // Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->middleware('is_user')->name('home');

@@ -14,7 +14,6 @@
                 <h5 class="card-title">Daftar Admin<span>| GA Section</span></h5>
                 <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
-                    <!-- <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('export.fasilitas') }}'"><i class="bi bi-download"></i>&nbsp Unduh</button> -->
                 </div>
 
                 <!-- FORM TAMBAH DATA  -->
@@ -38,6 +37,13 @@
                                             <input type="text" class="form-control item mt-1" name="name" id="name" placeholder="Type here ...">
                                         </div>
                                         <div class="form-group mt-2">
+                                            <label for="role">ROLE</label>
+                                            <select class="form-control item mt-1" name="role" id="role">
+                                                <option value="admin">Admin</option>
+                                                <option value="inspektur">Inspektur</option>
+                                            </select>
+                                        </div>
+                                        <div class="form-group mt-2">
                                             <label for="password">PASSWORD</label>
                                             <input type="password" class="form-control item mt-1" name="password" id="password">
                                         </div>
@@ -58,6 +64,7 @@
                             <th scope="col">No</th>
                             <th scope="col">NIK</th>
                             <th scope="col">Nama</th>
+                            <th scope="col">Role</th>
                             <th scope="col">Password</th>
                             <th scope="col">Action</th>
                         </tr>
@@ -69,6 +76,7 @@
                             <th>{{ $i++ }}</th>
                             <td>{{ $a->nik }}</td>
                             <td>{{ $a->name }}</td>
+                            <td>{{ $a->role }}</td>
                             <td>
                                 <div class="password-container">
                                     <input type="password" class="password-text" data-chain="{{ $a->chain }}" value="{{ $a->chain }}" readonly>
@@ -107,16 +115,25 @@
                                                     <input type="text" class="form-control item mt-1" name="name" id="name" placeholder="Type here ..." value="{{ $a->name }}">
                                                 </div>
                                                 <div class="form-group mt-2">
+                                                    <label for="role">ROLE</label>
+                                                    <select class="form-control item mt-1" name="role" id="role">
+                                                        <option value="admin" {{ $a->role == 'admin' ? 'selected' : '' }}>Admin</option>
+                                                        <option value="inspektur" {{ $a->role == 'inspektur' ? 'selected' : '' }}>Inspektur</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group mt-2">
                                                     <label for="password">PASSWORD</label>
-                                                    <input type="password" class="form-control item mt-1" name="password" id="password" value="{{ $a->chain }}">
+                                                    <div class="input-group d-flex" style="position: relative;">
+                                                        <input type="password" class="form-control item mt-1" name="password" id="password" value="{{ $a->chain }}">
+                                                        <i class="input-group-append bi bi-eye-slash-fill" style="z-index: 10;" onclick="togglePasswordVisibility(this)"></i>
+                                                    </div>
                                                 </div>
                                                 <div class="form-group d-flex justify-content-center mt-3">
                                                     <button type="submit" class="btn btn-primary create-account">Simpan</button>
                                                     <button type="button" class="btn btn-secondary btn-cancel ms-2" data-bs-dismiss="modal">Cancel</button>
                                                 </div>
                                             </div>
-                                            <!-- <button type="submit" class="btn btn-primary py-1 px-2 mt-3" style="background-color: #012970;">Simpan</button> -->
-                                            <!-- <button type="button" class="btn btn-secondary py-1 px-2 mt-3" data-bs-dismiss="modal">Cancel</button> -->
                                         </div>
                                     </div>
                                 </form>

@@ -4,8 +4,10 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use RealRashid\SweetAlert\Facades\Alert;
 
-class IsGuest
+class IsInspektur
 {
     /**
      * Handle an incoming request.
@@ -16,9 +18,12 @@ class IsGuest
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->role == 'guest') {
+        if (auth()->check() && auth()->user()->role == 'inspektur') {
+            // session(['url.intended' => $request->fullUrl()]);
             return $next($request);
         }
+        // Log::info('Intended URL:', ['url' => $request->fullUrl()]);
+        session(['url.intended' => $request->fullUrl()]);
         return redirect('/');
     }
 }

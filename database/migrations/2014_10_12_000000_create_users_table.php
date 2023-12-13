@@ -17,7 +17,7 @@ class CreateUsersTable extends Migration
             $table->id();
             $table->string('nik')->unique();
             $table->string('name');
-            $table->boolean('is_admin')->default(1);
+            $table->string('role');
             $table->string('chain');
             $table->string('password');
             $table->rememberToken();

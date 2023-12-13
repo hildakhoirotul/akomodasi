@@ -78,7 +78,7 @@ class GuestController extends Controller
     public function fasilitas($nama_tabel)
     {
         $list = Fasilitas::get();
-        $fasilitas = Fasilitas::where('name', 'LIKE', '%' . $nama_tabel . '%')->first();
+        $fasilitas = strtoupper(str_replace('_', ' ', $nama_tabel));
 
         $queryBuilder = DB::table($nama_tabel);
         $tabel = $queryBuilder->paginate(50);

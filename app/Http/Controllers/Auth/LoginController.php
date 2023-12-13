@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\IsInspektur;
 use App\Models\Activity;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -14,16 +15,6 @@ use RealRashid\SweetAlert\Facades\Alert;
 
 class LoginController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles authenticating users for the application and
-    | redirecting them to your home screen. The controller uses a trait
-    | to conveniently provide its functionality to your applications.
-    |
-    */
     protected $user;
     use AuthenticatesUsers;
 
@@ -56,14 +47,26 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
+        $role = $request->input('role');
+// dd($role);
         if (Auth::attempt($credentials)) {
-            // if (auth()->user()->is_admin == 1) {
-            // Alert::success('Berhasil Masuk', 'Selamat Datang ' . auth()->user()->nama);
-            // return redirect()->route('dashboard');
-            // } else {
-            Alert::success('Berhasil Masuk', 'Selamat Datang ' . auth()->user()->name);
-            return redirect()->route('home');
-            // }
+            $user = auth()->user();
+            if ($user->role == 'admin' && $role == 'admin') {
+                Alert::success('Berhasil Masuk', 'Selamat Datang ' . auth()->user()->name);
+                // return redirect()->route('home');
+                $url = session()->get('url.intended', '/home');
+                return redirect()->intended($url);
+            } elseif ($user->role == 'inspektur' && $role == 'inspektur') {
+                // return redirect()->route('home.inspektur');
+                $url = session()->get('url.intended', '/inspektur-dashboard');
+                if ($url == '/inspektur-dashboard') {
+                    Alert::success('Berhasil Masuk', 'Selamat Datang ' . auth()->user()->name);
+                }
+                return redirect()->intended($url);
+            } else {
+                Alert::error('Access Denied', 'Pastikan NIK dan Password Anda benar');
+                return redirect()->route('login');
+            }
         } else {
             Alert::error('Login Gagal', 'NIK atau kata sandi salah!')->persistent(true, false);
             return redirect()->route('login');
@@ -72,7 +75,7 @@ class LoginController extends Controller
 
     public function guestLogin()
     {
-        $guest = User::where('is_admin', 0)->first();
+        $guest = User::where('role', 'guest')->first();
         Auth::login($guest);
 
         return redirect()->route('home.guest');

@@ -12,7 +12,7 @@
         <div class="card recent-sales overflow-auto">
             <div class="card-body">
                 <h5 class="card-title">Daftar Properti<span>| GA Section</span></h5>
-                @if(Auth::user()->is_admin)
+                @if(Auth::user()->role == 'admin')
                 <form action="{{ route('reset.fasilitas') }}" method="POST">
                     <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
                         <button type="button" class="btn btn-primary" id="addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
@@ -73,7 +73,7 @@
                             <th scope="col">Daftar Kolom</th>
                             <th scope="col">Jumlah Kolom</th>
                             <th scope="col">Jumlah Data</th>
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->role == 'admin')
                             <th scope="col">Action</th>
                             @endif
                         </tr>
@@ -83,11 +83,17 @@
                         @foreach($list as $l)
                         <tr>
                             <th>{{ $i++ }}</th>
-                            <td>{{ $l->name }}</td>
-                            <td>{{ implode(', ', json_decode($l->columns, true)) }}</td>
+                            <td><a href="{{ route('fasilitas', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">{{ $l->name }}</a></td>
+                            <td>
+                            @if ($l->columns)
+                            {{ implode(', ', json_decode($l->columns, true)) }}
+                            @else
+                            0
+                            @endif
+                            </td>
                             <td>{{ $l->jumlah_atribut }}</td>
                             <td>{{ $l->jumlah }}</td>
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->role == 'admin')
                             <td>
                                 <form action="{{ route('delete.table', ['tabel' => $l->name]) }}" method="POST" style="display: inline-block;">
                                     @csrf
@@ -200,7 +206,9 @@
     }
 </script>
 <script>
-    const userRole = {!! json_encode(Auth::check() ? Auth::user()->is_admin : 0) !!};
+    const userRole = {
+        !!json_encode(Auth::check() ? Auth::user()->role : 'guest') !!
+    };
     document.getElementById('searchTable').addEventListener('input', function() {
         filterData();
     });

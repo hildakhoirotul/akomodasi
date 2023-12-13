@@ -11,9 +11,9 @@
     <div class="col-12">
         <div class="card recent-sales">
             <div class="card-body">
-                <h5 class="card-title">{{ $fasilitas->name }} &nbsp<span>| GA Section</span></h5>
-                @if(Auth::user()->is_admin)
-                <div class="d-flex justify-content-between table-header">
+                <h5 class="card-title" style="font-size: 22px;">{{ $fasilitas }} &nbsp<span>| GA Section</span></h5>
+                @if(Auth::user()->role == 'admin')
+                <div class="d-flex justify-content-between table-header mb-1">
                     <form action="{{ route('reset.data', $nama_tabel) }}" method="POST" style="display: inline-block;">
                         <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addData"><i class="bi bi-plus-square"></i>&nbsp Tambah Data</button>
@@ -30,17 +30,7 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <!-- @if($hasBooleanColumn)
-                        <div class="dropdown me-2">
-                            <select id="jenis" name="jenis" class="form-control filter-jenis" style="height: 34px;padding: 5px;font-size: 12px;">
-                                <option value="">OK/NOT OK</option>
-                                <option value="1">OK</option>
-                                <option value="false">NOT OK</option>
-                            </select>
-                        </div>
-                        @endif -->
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addColumn"><i class="bi bi-plus-lg"></i>&nbsp Tambah Kolom</button>
-                        <!-- <button type="button" class="btn btn-danger"><i class="bi bi-x-circle"></i>&nbsp Hapus Kolom</button> -->
                         <div class="btn-group">
                             <button class="btn btn-danger" data-intro="ini adalah grup tombol" data-step="1" type="button" id="deleteColumn">
                                 <i class="bi bi-x-circle"></i>&nbsp Hapus Kolom
@@ -154,7 +144,6 @@
                                     <h5 class="modal-title" id="importExcelLabel" style="font-size: 18px;color:#000;">Import Data Excel</h5>
                                 </div>
                                 <div class="modal-body px-3 pt-2 pb-1 mb-0">
-                                    <!-- Tempatkan form import di sini -->
                                     @csrf
                                     <div class="form-group p-0">
                                         <input type="file" name="file" accept=".xlsx, .xls, .csv">
@@ -178,7 +167,7 @@
                             <th scope="col">{{ $c }}</th>
                             @endif
                             @endforeach
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->role == 'admin')
                             <th>Action</th>
                             @endif
                         </tr>
@@ -202,7 +191,7 @@
                             </td>
                             @endif
                             @endforeach
-                            @if(Auth::user()->is_admin)
+                            @if(Auth::user()->role == 'admin')
                             <td>
                                 <form action="{{ route('delete.data', [$nama_tabel, $row->id]) }}" method="POST" style="display: inline-block;">
                                     <div class="btn-group" role="group" aria-label="Basic outlined example">
@@ -276,8 +265,6 @@
         </div>
     </div>
 </main>
-
-<!-- Tambahkan script Intro.js -->
 
 <script>
     var formContainer = document.getElementById('formContainer');
@@ -461,7 +448,7 @@
     }
 </script>
 <script>
-    const userRole = @json(Auth::check() ? Auth::user()-> is_admin : 0);
+    const userRole = @json(Auth::check() ? Auth::user()->role : 'guest');
     console.log(userRole)
     document.getElementById('searchData').addEventListener('input', function() {
         filterData();

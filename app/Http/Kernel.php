@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
         'activity' => \App\Http\Middleware\ActivityLogger::class,
         'is_admin' =>  \App\Http\Middleware\IsAdmin::class,
         'is_guest' => \App\Http\Middleware\IsGuest::class,
+        'is_inspektur' => \App\Http\Middleware\IsInspektur::class,
     ];
 }

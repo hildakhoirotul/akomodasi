@@ -16,9 +16,10 @@ class IsAdmin
      */
     public function handle(Request $request, Closure $next)
     {
-        if (auth()->check() && auth()->user()->is_admin == 1) {
+        if (auth()->check() && auth()->user()->role == 'admin') {
             return $next($request);
         }
+        session(['url.intended' => $request->fullUrl()]);
         return redirect('/');
     }
 }

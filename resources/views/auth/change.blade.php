@@ -58,7 +58,7 @@
                                         <p class="text-center small mb-1">Silahkan Masukkan Password Lama dan Password Baru untuk Mengganti Sandi</p>
                                     </div>
 
-                                    <form class="row g-3 needs-validation" method="POST" action="{{ route('changePassword') }}" novalidate>
+                                    <form class="row g-3 needs-validation" method="POST" action="{{ Auth::user()->role === 'admin' ? route('changePassword') : route('change.password') }}" novalidate>
                                         @csrf
                                         <div class="col-12">
                                             <!-- <label for="password_lama" class="form-label">Password Lama</label> -->

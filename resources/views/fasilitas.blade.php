@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+@section('title', $fasilitas)
 @section('content')
 <main id="main" class="main">
     <div class="search-bar">

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Daftar Properti')
 
 @section('content')
 <main id="main" class="main">

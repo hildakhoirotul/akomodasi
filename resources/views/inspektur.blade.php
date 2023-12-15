@@ -1,7 +1,14 @@
 @extends('layouts.master')
+@section('title', 'Dashboard')
 
 @section('content')
 <section class="section inspektur dashboard">
+    <div class="search-bar">
+        <div class="search-form d-flex align-items-center">
+            <input type="text" name="query" id="searchTable" placeholder="Search" oninput="searchProperti()" title="Enter search keyword">
+            <button type="button" title="Search"><i class="bi bi-search"></i></button>
+        </div>
+    </div>
     <div class="row">
 
         <!-- Left side columns -->
@@ -14,7 +21,7 @@
                 $iconIndex = 0;
                 @endphp
                 @foreach($list as $l)
-                <div class="col-xxl-4 col-md-3 col-6">
+                <div class="col-xxl-4 col-md-3 col-6 searchable">
                     <a href="{{ route('properti.inspektur', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">
                         <div class="card info-card {{ $color[$iconIndex] }}">
                             <div class="card-body inspektur-card text-center">
@@ -37,5 +44,21 @@
         </div><!-- End Left side columns -->
     </div>
 </section>
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<script>
+    function searchProperti() {
+        var searchInput = document.getElementById("searchTable").value.toLowerCase();
+        var searchableElements = document.querySelectorAll(".searchable");
+
+        searchableElements.forEach(function(element) {
+            var text = element.textContent.toLowerCase();
+
+            if (text.includes(searchInput)) {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        });
+    }
+</script>
 @endsection

@@ -1,4 +1,5 @@
 @extends('layouts.app')
+@section('title', 'Daftar Pengguna')
 
 @section('content')
 <main id="main" class="main">

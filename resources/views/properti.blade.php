@@ -1,4 +1,5 @@
 @extends('layouts.master')
+@section('title', $fasilitas)
 
 @section('content')
 <section class="input-properti">

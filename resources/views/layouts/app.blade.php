@@ -8,7 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Dashboard</title>
+    <title>@yield('title')</title>
 
     <!-- Favicons -->
     <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">
@@ -339,7 +339,7 @@
             <li class="nav-item">
                 <a class="nav-link{{ Route::is('daftar.admin') ? ' active' : '' }}" href="{{ route('daftar.admin') }}">
                     <i class="bi bi-people"></i>
-                    <span>Tambah Admin</span>
+                    <span>Daftar Pengguna</span>
                 </a>
             </li>
             @endif

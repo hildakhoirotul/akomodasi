@@ -48,15 +48,15 @@ class LoginController extends Controller
         ]);
 
         $role = $request->input('role');
-// dd($role);
+
         if (Auth::attempt($credentials)) {
             $user = auth()->user();
-            if ($user->role == 'admin' && $role == 'admin') {
+            if ($user->role == 'admin') {
                 Alert::success('Berhasil Masuk', 'Selamat Datang ' . auth()->user()->name);
                 // return redirect()->route('home');
                 $url = session()->get('url.intended', '/home');
                 return redirect()->intended($url);
-            } elseif ($user->role == 'inspektur' && $role == 'inspektur') {
+            } elseif ($user->role == 'inspektur') {
                 // return redirect()->route('home.inspektur');
                 $url = session()->get('url.intended', '/inspektur-dashboard');
                 if ($url == '/inspektur-dashboard') {

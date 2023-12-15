@@ -51,15 +51,16 @@
 
                                     <form class="row g-3 needs-validation" method="POST" action="{{ route('login') }}" novalidate>
                                         @csrf
-                                        <div class="col-12">
+                                        <!-- <div class="col-12">
+                                            <p>Masuk Sebagai:</p>
                                             <div class="btn-group" role="group" aria-label="Login as">
                                                 <input type="radio" class="btn-check" name="role" id="admin" value="admin" autocomplete="off" checked>
-                                                <label class="btn btn-outline-primary" for="admin">Admin</label>
+                                                <label class="btn btn-outline-warning" for="admin">Admin</label>
 
                                                 <input type="radio" class="btn-check" name="role" id="inspektur" value="inspektur" autocomplete="off">
-                                                <label class="btn btn-outline-primary" for="inspektur">Inspektur</label>
+                                                <label class="btn btn-outline-warning" for="inspektur">Inspektur</label>
                                             </div>
-                                        </div>
+                                        </div> -->
                                         <div class="col-12">
                                             <label for="nik" class="form-label">NIK</label>
                                             <div class="input-group has-validation">

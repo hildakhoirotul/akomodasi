@@ -8,7 +8,7 @@
             <button type="button" title="Search"><i class="bi bi-search"></i></button>
         </div>
     </div>
-    <div class="col-12">
+    <div class="col-12">    
         <div class="card recent-sales">
             <div class="card-body">
                 <h5 class="card-title" style="font-size: 22px;">{{ $fasilitas }} &nbsp<span>| GA Section</span></h5>
@@ -19,7 +19,7 @@
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addData"><i class="bi bi-plus-square"></i>&nbsp Tambah Data</button>
                             <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importData"><i class="bi bi-upload"></i>&nbsp Unggah</button>
                             <a href="{{ route('export.data', ['nama_tabel' => $nama_tabel]) }}" class="btn btn-primary">
-                                <i class="bi bi-download"></i>&nbsp; Unduh
+                                <i class="bi bi-download"></i>&nbsp Unduh
                             </a>
                             @csrf
                             @method('DELETE')

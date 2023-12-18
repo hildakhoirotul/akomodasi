@@ -84,7 +84,7 @@
                         @foreach($list as $l)
                         <tr>
                             <th>{{ $i++ }}</th>
-                            <td><a href="{{ route('fasilitas', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">{{ $l->name }}</a></td>
+                            <td><a href="{{ Auth::user()->role == 'admin' ? route('fasilitas', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) : route('fasilitas.guest', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">{{ $l->name }}</a></td>
                             <td>
                             @if ($l->columns)
                             {{ implode(', ', json_decode($l->columns, true)) }}

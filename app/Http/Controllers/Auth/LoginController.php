@@ -47,8 +47,6 @@ class LoginController extends Controller
             'password' => 'required|string',
         ]);
 
-        // $role = $request->input('role');
-
         if (Auth::attempt($credentials)) {
             $user = auth()->user();
             if ($user->role == 'admin') {

@@ -266,7 +266,7 @@
                 @else
                 <a href="{{ route('logout') }}" class="btn btn-outline-primary me-4" onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
-                    <i class="bi bi-box-arrow-right"></i>&nbsp; Login
+                    <i class="bi bi-box-arrow-right"></i>&nbsp; Keluar
                     <!-- <img src="{{ asset('assets/img/user.png') }}" alt="Profile" class="rounded-circle"> Login -->
                 </a>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

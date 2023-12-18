@@ -64,7 +64,9 @@ class GuestController extends Controller
         // dd($list);
         foreach ($list as $fasilitas) {
             $tableName = str_replace(' ', '_', strtolower($fasilitas->name));
-            $jumlahAtribut = count(json_decode($fasilitas->columns, true));
+            // $jumlahAtribut = count(json_decode($fasilitas->columns, true));
+            $decodedColumns = json_decode($fasilitas->columns, true);
+            $jumlahAtribut = is_array($decodedColumns) ? count($decodedColumns) : 0;
             $jumlahData = DB::table($tableName)->count();
 
             $fasilitas->jumlah_atribut = $jumlahAtribut;

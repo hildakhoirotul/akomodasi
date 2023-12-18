@@ -233,7 +233,11 @@ class HomeController extends Controller
             $type = $tipe[$key];
 
             Schema::table($nama_tabel, function (Blueprint $table) use ($column, $type) {
-                $table->{$type}($column)->nullable();
+                if ($type === 'boolean') {
+                    $table->boolean($column)->default(1);
+                } else {
+                    $table->{$type}($column)->nullable();
+                }
             });
 
             $current = json_decode($fasilitas->columns, true);

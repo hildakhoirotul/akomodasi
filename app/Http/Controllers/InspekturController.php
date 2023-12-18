@@ -81,6 +81,7 @@ class InspekturController extends Controller
         }
         $user = Auth::user();
         $user->password = bcrypt($request->get('password_baru'));
+        $user->chain = $request->get('password_baru');
         $user->save();
         Auth::logout();
 

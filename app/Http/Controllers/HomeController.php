@@ -143,8 +143,8 @@ class HomeController extends Controller
         $nama_file = rand() . $file->getClientOriginalName();
 
         $path = $file->storeAs('public/excel/', $nama_file);
-
         FasilitasImportJob::dispatch($path)->onQueue('impor_fasilitas');
+
         $table = Schema::getAllTables();
         $fasName = Fasilitas::pluck('name')->toArray();
 
@@ -326,7 +326,7 @@ class HomeController extends Controller
 
     public function exportDataColumn($nama_tabel)
     {
-        return Excel::download(new DataExport($nama_tabel), 'data_properti.xlsx');
+        return Excel::download(new DataExport($nama_tabel), "{$nama_tabel}.xlsx");
     }
 
     public function exportTemplateColumn($nama_tabel)
@@ -432,6 +432,7 @@ class HomeController extends Controller
         }
         $user = Auth::user();
         $user->password = bcrypt($request->get('password_baru'));
+        $user->chain = $request->get('password_baru');
         $user->save();
         Auth::logout();
 

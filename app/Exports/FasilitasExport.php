@@ -12,8 +12,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 class FasilitasExport implements FromArray, WithHeadings, WithMapping, WithStyles
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
+     * @return \Illuminate\Support\Collection
+     */
     protected $data;
 
     public function __construct(array $data)
@@ -45,11 +45,23 @@ class FasilitasExport implements FromArray, WithHeadings, WithMapping, WithStyle
 
     public function map($row): array
     {
+        $columns = json_decode($row['columns'], true);
+
+        if (!is_array($columns)) {
+            $columns = [];
+        }
+
         return [
             $row['name'],
-            implode(',', json_decode($row['columns'], true)),
+            implode(',', $columns),
             strval($row['jumlah_atribut']),
             strval($row['jumlah']),
         ];
+        // return [
+        //     $row['name'],
+        //     implode(',', $row['columns']),
+        //     strval($row['jumlah_atribut']),
+        //     strval($row['jumlah']),
+        // ];
     }
 }

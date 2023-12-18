@@ -457,7 +457,7 @@
     function filterData() {
         const selected = document.getElementById('searchData').value;
 
-        const route = userRole === 1
+        const route = userRole === 'admin'
             ? `{{ route('search.data', $nama_tabel) }}?data=${selected}`
             : `{{ route('search.data.guest', $nama_tabel) }}?data=${selected}`;
 

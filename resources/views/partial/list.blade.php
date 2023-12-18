@@ -2,9 +2,14 @@
 @foreach($result as $l)
 <tr>
     <th>{{ $i++ }}</th>
-    <td>{{ $l->name }}</td>
-    <!-- <td>{{ $l->filteredColumns }}</td> -->
-    <td>{{ implode(', ', json_decode($l->columns, true)) }}</td>
+    <td><a href="{{ Auth::user()->role == 'admin' ? route('fasilitas', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) : route('fasilitas.guest', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">{{ $l->name }}</a></td>
+    <td>
+        @if ($l->columns)
+        {{ implode(', ', json_decode($l->columns, true)) }}
+        @else
+        0
+        @endif
+    </td>
     <td>{{ $l->jumlah_atribut }}</td>
     <td>{{ $l->jumlah }}</td>
     @if(Auth::user()->role == 'admin')

@@ -207,9 +207,7 @@
     }
 </script>
 <script>
-    const userRole = {
-        !!json_encode(Auth::check() ? Auth::user()->role : 'guest') !!
-    };
+    const userRole = @json(Auth::check() ? Auth::user()->role : 'guest');
     document.getElementById('searchTable').addEventListener('input', function() {
         filterData();
     });
@@ -218,7 +216,7 @@
         const selected = document.getElementById('searchTable').value;
 
         let route;
-        if (userRole === 1) {
+        if (userRole === 'admin') {
             route = `{{ route('search.table') }}?table=${selected}`;
         } else {
             route = `{{ route('search.table.guest') }}?table=${selected}`;

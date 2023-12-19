@@ -158,9 +158,9 @@
                     </div>
                 </div>
 
-                <table class="table table-hover table-responsive">
+                <table class="table table-hover table-responsive text-center">
                     <thead>
-                        <tr class="align-middle">
+                        <tr class="align-middle" style="font-size: 10px;">
                             <th>No</th>
                             @foreach($columns as $c)
                             @if ($c !== 'id' && $c !== 'created_at' && $c !== 'updated_at')

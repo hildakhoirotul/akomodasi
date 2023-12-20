@@ -8,7 +8,7 @@
             <button type="button" title="Search"><i class="bi bi-search"></i></button>
         </div>
     </div>
-    <div class="col-12">    
+    <div class="col-12">
         <div class="card recent-sales">
             <div class="card-body">
                 <h5 class="card-title" style="font-size: 22px;">{{ $fasilitas }} &nbsp<span>| GA Section</span></h5>
@@ -30,6 +30,7 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"><i class="bi bi-plus-lg"></i>&nbsp Info</button>
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addColumn"><i class="bi bi-plus-lg"></i>&nbsp Tambah Kolom</button>
                         <div class="btn-group">
                             <button class="btn btn-danger" data-intro="ini adalah grup tombol" data-step="1" type="button" id="deleteColumn">
@@ -49,6 +50,47 @@
                     </div>
                 </div>
                 @endif
+
+                <div class="modal fade" id="info" tabindex="-1" role="dialog" aria-labelledby="importExcelLabel" aria-hidden="true" data-backdrop="false">
+                    <div class="modal-dialog" role="document">
+                        <form action="{{ route('add.info', $nama_tabel)}}" method="POST">
+                            <div class="modal-content">
+                                <div class="modal-header p-2 px-3" style="background-color: #012970;">
+                                    <h5 class="modal-title text-center" id="importExcelLabel" style="color: #fff;">KETERANGAN</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body justify-content-center pt-1 p-3 mb-0">
+                                    @csrf
+                                    <span>Keterangan saat ini:</span>
+                                    <div id="formContainer p-1" class="mt-2">
+                                        @php
+                                        $info = \App\Models\Info::where('table_name', $nama_tabel)->get();
+                                        @endphp
+                                        @forelse ($info as $item)
+                                        <div class="edit-container" data-edit-url="{{ route('edit.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}" data-delete-url="{{ route('delete.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}">
+                                            <pre class="preitem mb-0">{{ $item->desc }}</pre>
+                                            <div class="edit-controls">
+                                                <button type="button" class="btn btn-outline-primary btn-edit me-1"><i class="bi bi-pencil-square"></i></button>
+                                                <button type="button" class="btn btn-danger btn-delete me-1"><i class="bi bi-x-square"></i></button>
+                                                <button type="button" class="btn btn-outline-success btn-save me-1" style="display: none;" id="saveBtn"><i class="bi bi-check2-square"></i></button>
+                                            </div>
+                                            <textarea class="form-control text-input" placeholder="Ketik disini ..." id="editInput" style="display: none;">{{ $item->desc }}</textarea>
+                                        </div>
+                                        @empty
+                                        <p style="font-size: 12px;font-style: italic;">Tidak ada keterangan saat ini.</p>
+                                        @endforelse
+                                        <div class="mb-2 mt-3">
+                                            <label for="floatingInput" class="mb-1">Tambah Keterangan:</label>
+                                            <textarea class="form-control text-input" placeholder="Ketik disini ..." id="floatingInput" name="info"></textarea>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary py-1 px-2" style="background-color: #012970;">Simpan</button>
+                                    <button type="button" class="btn btn-secondary py-1 px-2" data-bs-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <div class="modal fade" id="addColumn" tabindex="-1" role="dialog" aria-labelledby="importExcelLabel" aria-hidden="true" data-backdrop="false">
                     <div class="modal-dialog" role="document">
@@ -158,106 +200,107 @@
                     </div>
                 </div>
 
-                <table class="table table-hover table-responsive text-center">
-                    <thead>
-                        <tr class="align-middle" style="font-size: 10px;">
-                            <th>No</th>
-                            @foreach($columns as $c)
-                            @if ($c !== 'id' && $c !== 'created_at' && $c !== 'updated_at')
-                            <th scope="col">{{ $c }}</th>
-                            @endif
-                            @endforeach
-                            @if(Auth::user()->role == 'admin')
-                            <th>Action</th>
-                            @endif
-                        </tr>
-                    </thead>
-                    <tbody id="dataBody">
-                        @foreach($tabel as $key => $row)
-                        <tr>
-                            <td>{{ $key + 1 }}</td>
-                            @foreach($columns as $column)
-                            @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at')
-                            <td>
-                                @if ($columnTypes[$column] === 'boolean')
-                                @if ($row->$column)
-                                <span class="badge bg-success">OK</span>
-                                @else
-                                <span class="badge bg-danger">NOT OK</span>
+                <div class="table-wrapper">
+                    <table class="table table-hover table-responsive text-center">
+                        <thead>
+                            <tr class="align-middle">
+                                <th>No</th>
+                                @foreach($columns as $c)
+                                @if ($c !== 'id' && $c !== 'created_at' && $c !== 'updated_at')
+                                <th scope="col">{{ $c }}</th>
                                 @endif
-                                @else
-                                {{ $row->$column }}
+                                @endforeach
+                                @if(Auth::user()->role == 'admin')
+                                <th>Action</th>
                                 @endif
-                            </td>
-                            @endif
-                            @endforeach
-                            @if(Auth::user()->role == 'admin')
-                            <td>
-                                <form action="{{ route('delete.data', [$nama_tabel, $row->id]) }}" method="POST" style="display: inline-block;">
-                                    <div class="btn-group" role="group" aria-label="Basic outlined example">
-                                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editData{{ $row->id }}"><i class="bi bi-pen-fill"></i></button>
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ $nama_tabel }}', '{{ $row->id }}', this)"><i class="bi bi-trash-fill"></i></button>
-                                    </div>
-                                </form>
+                            </tr>
+                        </thead>
+                        <tbody id="dataBody">
+                            @foreach($tabel as $key => $row)
+                            <tr>
+                                <td>{{ $key + 1 }}</td>
+                                @foreach($columns as $column)
+                                @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at')
+                                <td>
+                                    @if ($columnTypes[$column] === 'boolean')
+                                    @if ($row->$column)
+                                    <span class="badge bg-success">OK</span>
+                                    @else
+                                    <span class="badge bg-danger">NOT OK</span>
+                                    @endif
+                                    @else
+                                    {{ $row->$column }}
+                                    @endif
+                                </td>
+                                @endif
+                                @endforeach
+                                @if(Auth::user()->role == 'admin')
+                                <td>
+                                    <form action="{{ route('delete.data', [$nama_tabel, $row->id]) }}" method="POST" style="display: inline-block;">
+                                        <div class="btn-group" role="group" aria-label="Basic outlined example">
+                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#editData{{ $row->id }}"><i class="bi bi-pen-fill"></i></button>
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button" class="btn btn-danger" onclick="confirmDelete('{{ $nama_tabel }}', '{{ $row->id }}', this)"><i class="bi bi-trash-fill"></i></button>
+                                        </div>
+                                    </form>
 
-                                <div class="modal fade" id="editData{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="importExcelLabel" aria-hidden="true" data-backdrop="false">
-                                    <div class="modal-dialog" role="document">
-                                        <form action="{{ route('edit.data', [$nama_tabel, $row->id]) }}" method="POST">
-                                            <div class="modal-content">
-                                                <div class="modal-header p-2 px-3" style="background-color: #012970;">
-                                                    <h5 class="modal-title text-center" id="importExcelLabel" style="color: #fff;">Edit Data</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                </div>
-                                                <div class="modal-body justify-content-center p-3 mb-0">
-                                                    @csrf
-                                                    @foreach($columns as $column)
-                                                    @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at')
-                                                    <div class="mb-3">
-                                                        <label for="{{ $column }}" class="form-label">{{ ucfirst($column) }}</label>
-                                                        @if ($columnTypes[$column] === 'date')
-                                                        <input type="date" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
-                                                        @elseif ($columnTypes[$column] === 'boolean')
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="{{ $column }}" id="{{ $column }}" value="1" {{ $row->$column ? 'checked' : '' }}>
-                                                            <label class="form-check-label" for="{{ $column }}">
-                                                                OK
-                                                            </label>
-                                                        </div>
-                                                        <div class="form-check">
-                                                            <input class="form-check-input" type="radio" name="{{ $column }}" id="{{ $column }}" value="0" {{ !$row->$column ? 'checked' : '' }}>
-                                                            <label class="form-check-label" for="{{ $column }}">
-                                                                NOT OK
-                                                            </label>
-                                                        </div>
-                                                        @elseif ($columnTypes[$column] === 'time')
-                                                        <input type="time" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
-                                                        @elseif ($columnTypes[$column] === 'integer')
-                                                        <input type="number" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
-                                                        @elseif ($columnTypes[$column] === 'text')
-                                                        <textarea class="form-control" id="{{ $column }}" name="{{ $column }}">{{ $row->$column }}</textarea>
-                                                        @else
-                                                        <input type="text" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
-                                                        @endif
+                                    <div class="modal fade" id="editData{{ $row->id }}" tabindex="-1" role="dialog" aria-labelledby="importExcelLabel" aria-hidden="true" data-backdrop="false">
+                                        <div class="modal-dialog" role="document">
+                                            <form action="{{ route('edit.data', [$nama_tabel, $row->id]) }}" method="POST">
+                                                <div class="modal-content">
+                                                    <div class="modal-header p-2 px-3" style="background-color: #012970;">
+                                                        <h5 class="modal-title text-center" id="importExcelLabel" style="color: #fff;">Edit Data</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
-                                                    @endif
-                                                    @endforeach
-                                                    <button type="submit" class="btn btn-primary py-1 px-2 mt-3" style="background-color: #012970;">Simpan</button>
-                                                    <button type="button" class="btn btn-secondary py-1 px-2 mt-3" data-bs-dismiss="modal">Cancel</button>
+                                                    <div class="modal-body justify-content-center p-3 mb-0">
+                                                        @csrf
+                                                        @foreach($columns as $column)
+                                                        @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at')
+                                                        <div class="mb-3">
+                                                            <label for="{{ $column }}" class="form-label">{{ ucfirst($column) }}</label>
+                                                            @if ($columnTypes[$column] === 'date')
+                                                            <input type="date" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
+                                                            @elseif ($columnTypes[$column] === 'boolean')
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="{{ $column }}" id="{{ $column }}" value="1" {{ $row->$column ? 'checked' : '' }}>
+                                                                <label class="form-check-label" for="{{ $column }}">
+                                                                    OK
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input" type="radio" name="{{ $column }}" id="{{ $column }}" value="0" {{ !$row->$column ? 'checked' : '' }}>
+                                                                <label class="form-check-label" for="{{ $column }}">
+                                                                    NOT OK
+                                                                </label>
+                                                            </div>
+                                                            @elseif ($columnTypes[$column] === 'time')
+                                                            <input type="time" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
+                                                            @elseif ($columnTypes[$column] === 'integer')
+                                                            <input type="number" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
+                                                            @elseif ($columnTypes[$column] === 'text')
+                                                            <textarea class="form-control" id="{{ $column }}" name="{{ $column }}">{{ $row->$column }}</textarea>
+                                                            @else
+                                                            <input type="text" class="form-control" id="{{ $column }}" name="{{ $column }}" value="{{ $row->$column }}">
+                                                            @endif
+                                                        </div>
+                                                        @endif
+                                                        @endforeach
+                                                        <button type="submit" class="btn btn-primary py-1 px-2 mt-3" style="background-color: #012970;">Simpan</button>
+                                                        <button type="button" class="btn btn-secondary py-1 px-2 mt-3" data-bs-dismiss="modal">Cancel</button>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
 
-                            </td>
-                            @endif
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
+                                </td>
+                                @endif
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="d-flex justify-content-center mt-3" id="paging">
                 {{ $tabel->links()}}
@@ -265,7 +308,7 @@
         </div>
     </div>
 </main>
-
+<script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
 <script>
     var formContainer = document.getElementById('formContainer');
 
@@ -276,7 +319,7 @@
         var newField = document.createElement('input');
         newField.setAttribute('type', 'text');
         newField.setAttribute('name', 'column[]');
-        newField.setAttribute('class', 'form-control input-data me-2');
+        newField.setAttribute('class', 'form-control  me-2');
         newField.setAttribute('id', 'floatingInput');
         newField.setAttribute('placeholder', 'Nama Tabel');
         newContainer.appendChild(newField);
@@ -457,9 +500,9 @@
     function filterData() {
         const selected = document.getElementById('searchData').value;
 
-        const route = userRole === 'admin'
-            ? `{{ route('search.data', $nama_tabel) }}?data=${selected}`
-            : `{{ route('search.data.guest', $nama_tabel) }}?data=${selected}`;
+        const route = userRole === 'admin' ?
+            `{{ route('search.data', $nama_tabel) }}?data=${selected}` :
+            `{{ route('search.data.guest', $nama_tabel) }}?data=${selected}`;
 
         fetch(route)
             .then(response => response.text())
@@ -468,4 +511,95 @@
             });
     }
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var headings = document.querySelectorAll("th");
+
+        headings.forEach(function(heading) {
+            if (heading.textContent.length > 10) {
+                heading.classList.add("long-text");
+            }
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const editContainers = document.querySelectorAll('.edit-container');
+
+        editContainers.forEach(container => {
+            const preitem = container.querySelector('.preitem');
+            const textarea = container.querySelector('.text-input');
+            const btnEdit = container.querySelector('.btn-edit');
+            const btnSave = container.querySelector('.btn-save');
+
+            const editUrl = container.dataset.editUrl;
+
+            btnEdit.addEventListener('click', () => {
+                preitem.style.display = 'none';
+                textarea.style.display = 'block';
+                textarea.style.height = '100%';
+                btnEdit.style.display = 'none';
+                btnSave.style.display = 'inline-block';
+            });
+
+            btnSave.addEventListener('click', () => {
+                const newInfo = textarea.value;
+
+                $.ajax({
+                    url: editUrl,
+                    type: "POST",
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        info: newInfo
+                    },
+                    success: function(data) {
+                        alert('Info berhasil disimpan!');
+                    },
+                    error: function(error) {
+                        alert('Terjadi kesalahan saat menyimpan info.');
+                    }
+                });
+
+                preitem.textContent = textarea.value;
+                preitem.style.display = 'block';
+                textarea.style.display = 'none';
+                btnEdit.style.display = 'inline-block';
+                btnSave.style.display = 'none';
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.btn-delete');
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                const deleteUrl = this.closest('.edit-container').dataset.deleteUrl;
+                const containerToDelete = this.closest('.edit-container');
+
+                if (confirm('Anda yakin ingin menghapus data ini?')) {
+                    $.ajax({
+                        url: deleteUrl,
+                        type: "POST",
+                        data: {
+                            _method: "DELETE",
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(data) {
+                            containerToDelete.remove();
+                            alert('Data berhasil dihapus!');
+                        },
+                        error: function(error) {
+                            alert('Terjadi kesalahan saat menghapus data.');
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+
+
 @endsection

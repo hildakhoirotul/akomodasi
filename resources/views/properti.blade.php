@@ -9,7 +9,12 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="card-title py-3">{{ $fasilitas }}</h4>
-                        <a href="{{ route('home.inspektur') }}" class="badge bg-primary px-2" style="font-size: 16px;"><i class="bi bi-house"></i></a>
+                        <div class="d-flex align-items-center">
+                            <button type="button" class="btn btn-secondary me-1" style="font-size: 17.5px;padding: 0px 5px;" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" data-bs-title="{!! nl2br(e($info)) !!}">
+                                <i class="bi bi-info-lg"></i>
+                            </button>
+                            <a href="{{ route('home.inspektur') }}" class="badge bg-primary px-2" style="font-size: 16px;"><i class="bi bi-house"></i></a>
+                        </div>
                     </div>
                     <!-- Floating Labels Form -->
                     <form class="row g-3" action="{{ route('store.properti', $nama_tabel)}}" method="POST">

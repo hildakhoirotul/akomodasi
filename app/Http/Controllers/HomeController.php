@@ -9,6 +9,7 @@ use App\Jobs\DataImportJob;
 use App\Jobs\FasilitasImportJob;
 use App\Models\Activity;
 use App\Models\Fasilitas;
+use App\Models\Info;
 use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
@@ -271,6 +272,32 @@ class HomeController extends Controller
         return response()->json(['success' => true, 'message' => 'Kolom berhasil dihapus']);
     }
 
+    public function addInfo(Request $request, $nama_tabel)
+    {
+        $request->validate([
+            'info' => 'required|string',
+        ]);
+
+        Info::create([
+            'desc' => $request->info,
+            'table_name' => $nama_tabel,
+        ]);
+
+        return redirect()->back();
+    }
+
+    public function editInfo(Request $request, $tabel, $id)
+    {
+        // dd($request);
+        $info = Info::find($id);
+
+        if($info && $info->table_name === $tabel) {
+            $info->desc = $request->input('info');
+            $info->save();
+        }
+        return redirect()->back();
+    }
+
     public function tambahData(Request $request, $nama_tabel)
     {
         $inputData = $request->all();
@@ -288,6 +315,14 @@ class HomeController extends Controller
     public function hapusData($table, $id)
     {
         DB::table($table)->where('id', $id)->delete();
+
+        return redirect()->back();
+    }
+
+    public function hapusInfo($tabel, $id)
+    {
+        $info = Info::where('table_name', $tabel)->findOrFail($id);
+        $info->delete();
 
         return redirect()->back();
     }

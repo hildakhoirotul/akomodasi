@@ -1060,6 +1060,31 @@ section.input-properti {
   background-color: rgba(1, 4, 136, 0.9);
   color: #fff;
   padding: 0.5rem;
+  white-space: nowrap;
+}
+
+@media only screen and (max-width: 10ch) {
+  .recent-sales .table thead th {
+    font-size: 10px;
+  }
+}
+
+.long-text {
+  font-size: 10px;
+}
+
+.recent-sales .top-field .card-tooltip {
+  font-size: 20px;
+  margin-top: -3px;
+  text-decoration: none;
+}
+
+.card-tooltip .bi {
+  color: #012970;
+}
+
+.table-wrapper {
+  overflow-x: auto;
 }
 
 .table-responsive {
@@ -1421,9 +1446,14 @@ button.btn-close[data-bs-dismiss="modal"] {
 }
 
 .btn-group .btn-warning,
-.btn-group .btn-danger {
+.btn-group .btn-danger,
+.btn-group .btn-secondary {
   height: 33px;
   font-size: 13px;
+}
+
+.btn-group .btn-secondary {
+  background-color: #012970;
 }
 
 .password-container {
@@ -1451,6 +1481,39 @@ button.btn-close[data-bs-dismiss="modal"] {
   cursor: pointer;
 }
 
+#formContainer {
+  white-space: pre-line;
+}
+
+.edit-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px;
+  border: 1px solid #aeb4bc;
+  background-color: #f7fbff;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+.edit-controls {
+  display: flex;
+  align-items: end;
+}
+
+.btn-edit, .btn-save, .btn-delete {
+  font-size: 15px;
+  padding: 2px 5px;
+}
+
+.modal .text-input {
+  height: 100%;
+}
+
+.tooltip-inner {
+  text-align: left !important;
+  font-size: 12px;
+}
 /*--------------------------------------------------------------
 # Features Section
 --------------------------------------------------------------*/

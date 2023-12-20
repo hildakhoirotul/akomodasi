@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Fasilitas;
+use App\Models\Info;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -28,9 +29,24 @@ class InspekturController extends Controller
             $columnTypes[$column] = Schema::getColumnType($nama_tabel, $column);
         }
 
+        $info = $this->getInfoTooltip($nama_tabel);
+
         $hasBooleanColumn = in_array('boolean', $columnTypes);
         $fasilitas = strtoupper(str_replace('_', ' ', $nama_tabel));
-        return view('properti', compact('fasilitas', 'nama_tabel', 'columns', 'columnTypes', 'hasBooleanColumn'));
+        return view('properti', compact('fasilitas', 'nama_tabel', 'columns', 'columnTypes', 'hasBooleanColumn', 'info'));
+    }
+
+    public function getInfoTooltip($nama_tabel)
+    {
+        $infoList = Info::where('table_name', $nama_tabel)->get();
+
+        if ($infoList->isEmpty()) {
+            return 'Tidak ada informasi tambahan.';
+        }
+
+        $tooltipContent = $infoList->pluck('desc')->implode('<br>');
+
+        return $tooltipContent;
     }
 
     public function tambahData(Request $request, $nama_tabel)

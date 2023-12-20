@@ -33,11 +33,14 @@ Route::controller(HomeController::class)->middleware(['web', 'activity', 'is_adm
     Route::get('/unduh-properti', 'exportFasilitas')->name('export.fasilitas');
     Route::delete('/reset-daftar-tabel', 'resetFasilitas')->name('reset.fasilitas');
     Route::post('/tambah-kolom-di/{nama_tabel}', 'addColumn')->name('add.column');
+    Route::post('/tambah-keterangan-di/{nama_tabel}', 'addInfo')->name('add.info');
     Route::delete('/hapus-kolom-di/{nama_tabel}', 'deleteColumn')->name('delete.column');
     Route::post('/tambah-data-di/{nama_tabel}', 'tambahData')->name('store.data');
     Route::delete('/hapus-tabel/{tabel}', 'hapusTabel')->name('delete.table');
     Route::delete('/hapus-data-di/{tabel}/{id}', 'hapusData')->name('delete.data');
+    Route::delete('/hapus-keterangan-di/{tabel}/{id}', 'hapusInfo')->name('delete.info');
     Route::post('/edit-data-di/{tabel}/{id}', 'editData')->name('edit.data');
+    Route::post('/edit-keterangan-di/{tabel}/{id}', 'editInfo')->name('edit.info');
     Route::post('/import-data-di/{nama_tabel}', 'importDataColumn')->name('import.data');
     Route::get('/export-data/{nama_tabel}', 'exportDataColumn')->name('export.data');
     Route::get('/export-template/{nama_tabel}', 'exportTemplateColumn')->name('export.template');

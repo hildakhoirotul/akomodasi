@@ -30,7 +30,7 @@
                         </div>
                     </form>
                     <div class="btn-group" role="group" aria-label="Basic outlined example">
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"><i class="bi bi-plus-lg"></i>&nbsp Info</button>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#info"><i class="bi bi-info-circle"></i>&nbsp Info</button>
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#addColumn"><i class="bi bi-plus-lg"></i>&nbsp Tambah Kolom</button>
                         <div class="btn-group">
                             <button class="btn btn-danger" data-intro="ini adalah grup tombol" data-step="1" type="button" id="deleteColumn">

@@ -44,7 +44,7 @@ class InspekturController extends Controller
             return 'Tidak ada informasi tambahan.';
         }
 
-        $tooltipContent = $infoList->pluck('desc')->implode('<br>');
+        $tooltipContent = $infoList->pluck('desc')->implode('<br><br>');
 
         return $tooltipContent;
     }

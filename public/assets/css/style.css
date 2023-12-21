@@ -1515,6 +1515,13 @@ button.btn-close[data-bs-dismiss="modal"] {
   text-align: left !important;
   font-size: 12px;
 }
+
+.daftar-info {
+  max-height: 200px;
+  overflow-y: scroll;
+  scrollbar-width: thin;
+}
+
 /*--------------------------------------------------------------
 # Features Section
 --------------------------------------------------------------*/

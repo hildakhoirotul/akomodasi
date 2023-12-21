@@ -63,22 +63,24 @@
                                     @csrf
                                     <span>Keterangan saat ini:</span>
                                     <div id="formContainer p-1" class="mt-2">
-                                        @php
-                                        $info = \App\Models\Info::where('table_name', $nama_tabel)->get();
-                                        @endphp
-                                        @forelse ($info as $item)
-                                        <div class="edit-container" data-edit-url="{{ route('edit.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}" data-delete-url="{{ route('delete.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}">
-                                            <pre class="preitem mb-0">{{ $item->desc }}</pre>
-                                            <div class="edit-controls">
-                                                <button type="button" class="btn btn-outline-primary btn-edit me-1"><i class="bi bi-pencil-square"></i></button>
-                                                <button type="button" class="btn btn-danger btn-delete me-1"><i class="bi bi-x-square"></i></button>
-                                                <button type="button" class="btn btn-outline-success btn-save me-1" style="display: none;" id="saveBtn"><i class="bi bi-check2-square"></i></button>
+                                        <div class="daftar-info">
+                                            @php
+                                            $info = \App\Models\Info::where('table_name', $nama_tabel)->get();
+                                            @endphp
+                                            @forelse ($info as $item)
+                                            <div class="edit-container" data-edit-url="{{ route('edit.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}" data-delete-url="{{ route('delete.info', ['tabel' => $nama_tabel, 'id' => $item->id]) }}">
+                                                <pre class="preitem mb-0">{{ $item->desc }}</pre>
+                                                <div class="edit-controls">
+                                                    <button type="button" class="btn btn-outline-primary btn-edit me-1"><i class="bi bi-pencil-square"></i></button>
+                                                    <button type="button" class="btn btn-danger btn-delete me-1"><i class="bi bi-x-square"></i></button>
+                                                    <button type="button" class="btn btn-outline-success btn-save me-1" style="display: none;" id="saveBtn"><i class="bi bi-check2-square"></i></button>
+                                                </div>
+                                                <textarea class="form-control text-input" placeholder="Ketik disini ..." id="editInput" style="display: none;">{{ $item->desc }}</textarea>
                                             </div>
-                                            <textarea class="form-control text-input" placeholder="Ketik disini ..." id="editInput" style="display: none;">{{ $item->desc }}</textarea>
+                                            @empty
+                                            <p style="font-size: 12px;font-style: italic;">Tidak ada keterangan saat ini.</p>
+                                            @endforelse
                                         </div>
-                                        @empty
-                                        <p style="font-size: 12px;font-style: italic;">Tidak ada keterangan saat ini.</p>
-                                        @endforelse
                                         <div class="mb-2 mt-3">
                                             <label for="floatingInput" class="mb-1">Tambah Keterangan:</label>
                                             <textarea class="form-control text-input" placeholder="Ketik disini ..." id="floatingInput" name="info"></textarea>

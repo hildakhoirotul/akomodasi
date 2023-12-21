@@ -32,7 +32,7 @@
                 <form action="{{ route('simpan.data.tabel') }}" method="POST" id="formAddData" class="d-none">
                     @csrf
                     <h6>TAMBAH DATA</h6>
-                    <div id="formContainer">
+                    <div id="formContain">
                         <div class="form-floating mb-2 d-flex align-items-center">
                             <input type="text" name="name[]" class="form-control input-data me-2" id="floatingInput" placeholder="nama tabel">
                             <label for="floatingInput">nama tabel</label>
@@ -129,7 +129,7 @@
         formAddData.classList.add('d-none');
     });
 
-    var formContainer = document.getElementById('formContainer');
+    var formContainer = document.getElementById('formContain');
 
     function add() {
         var newContainer = document.createElement('div');

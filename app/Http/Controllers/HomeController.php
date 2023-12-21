@@ -193,6 +193,7 @@ class HomeController extends Controller
         }, $fasName);
         foreach ($transFasName as $name) {
             DB::statement("DROP TABLE $name");
+            DB::table('activities')->where('tabel', $name)->update(['tabel' => null]);
         }
         Fasilitas::truncate();
         return redirect()->back();
@@ -204,6 +205,7 @@ class HomeController extends Controller
         $fasilitas = strtoupper(str_replace('_', ' ', $nama_tabel));
 
         $queryBuilder = DB::table($nama_tabel);
+        $queryBuilder->orderBy('id', 'desc');
         $tabel = $queryBuilder->paginate(50);
 
         $columns = Schema::getColumnListing($nama_tabel);
@@ -291,7 +293,7 @@ class HomeController extends Controller
         // dd($request);
         $info = Info::find($id);
 
-        if($info && $info->table_name === $tabel) {
+        if ($info && $info->table_name === $tabel) {
             $info->desc = $request->input('info');
             $info->save();
         }

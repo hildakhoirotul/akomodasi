@@ -42,16 +42,38 @@ class DataImport implements ToCollection, WithHeadingRow, WithBatchInserts, Skip
 
             foreach ($this->columns as $column) {
                 if (!in_array($column, ['id', 'updated_at', 'created_at'])) {
-                    $formatted1 = strtolower(str_replace(' ', '_', $column));
-                    $formatted = strtolower(preg_replace('/[^\w\s]/', '', $formatted1));
+                    $format = str_replace('-', '_', $column);
+                    $formatted1 = strtolower(str_replace(' ', '_', $format));
+                    $formatted2 = strtolower(preg_replace('/[^\w\s]/', '', $formatted1));
+                    $formatted = str_replace('__', '_', $formatted2);
 
                     if ($this->columnTypes[$column] === 'date') {
-                        $dataValue = intval($row[$formatted]);
-                        $value = Date::excelToDateTimeObject($dataValue)->format('Y-m-d');
+                        // $dataValue = intval($row[$formatted]);
+                        // $value = Date::excelToDateTimeObject($dataValue)->format('Y-m-d');
+                        $dataValue = $row[$formatted];
+                        if ($dataValue === null || $dataValue === "-" || $dataValue === 0) {
+                            $value = null;
+                        } else {
+                            $dataValue = intval($dataValue);
+                            $value = Date::excelToDateTimeObject($dataValue)->format('Y-m-d');
+                        }
                     } elseif ($this->columnTypes[$column] === 'time') {
-                        $value = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[$formatted])->format('H:i:s');
-                    } elseif ($this->columnTypes[$column] === 'boolean'){
-                        $value = (strtolower($row[$formatted]) === 'ok') ? 1 : ((strtolower($row[$formatted]) === 'not ok') ? 0 : $row[$formatted]);
+                        // $value = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($row[$formatted])->format('H:i:s');
+                        $dataValue = $row[$formatted];
+                        if ($dataValue === null || $dataValue === "-" || $dataValue === 0) {
+                            $value = null;
+                        } else {
+                            $value = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($dataValue)->format('H:i:s');
+                        }
+                    } elseif ($this->columnTypes[$column] === 'boolean') {
+                        // $value = (strtolower($row[$formatted]) === 'ok') ? 1 : ((strtolower($row[$formatted]) === 'not ok') ? 0 : $row[$formatted]);
+                        $dataValue = $row[$formatted];
+
+                        if ($dataValue === null || $dataValue === "-" || $dataValue === 0) {
+                            $value = 0;
+                        } else {
+                            $value = (strtolower($dataValue) === 'ok') ? 1 : ((strtolower($dataValue) === 'not ok') ? 0 : $dataValue);
+                        }
                     } else {
                         $value = $row[$formatted];
                     }

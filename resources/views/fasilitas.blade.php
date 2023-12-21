@@ -100,9 +100,9 @@
                                     <h5 class="modal-title text-center" id="importExcelLabel" style="color: #fff;">Tambah Kolom</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
-                                <div class="modal-body justify-content-center p-3 pe-1 mb-0">
+                                <div class="modal-body justify-content-center p-3 mb-0">
                                     @csrf
-                                    <div id="formContainer">
+                                    <div id="formCont">
                                         <div class="form-floating mb-2 d-flex align-items-center">
                                             <input type="text" name="column[]" class="form-control input-data me-2" id="floatingInput" placeholder="nama kolom">
                                             <label for="floatingInput">nama kolom</label>
@@ -202,7 +202,7 @@
 
                 <div class="table-wrapper">
                     <table class="table table-hover table-responsive text-center">
-                        <thead>
+                        <thead style="z-index: 4;">
                             <tr class="align-middle">
                                 <th>No</th>
                                 @foreach($columns as $c)
@@ -253,7 +253,7 @@
                                                         <h5 class="modal-title text-center" id="importExcelLabel" style="color: #fff;">Edit Data</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
-                                                    <div class="modal-body justify-content-center p-3 mb-0">
+                                                    <div class="modal-body justify-content-center text-start p-3 mb-0">
                                                         @csrf
                                                         @foreach($columns as $column)
                                                         @if ($column !== 'id' && $column !== 'created_at' && $column !== 'updated_at')
@@ -310,7 +310,7 @@
 </main>
 <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
 <script>
-    var formContainer = document.getElementById('formContainer');
+    var formContainer = document.getElementById('formCont');
 
     function addColumn() {
         var newContainer = document.createElement('div');
@@ -319,14 +319,14 @@
         var newField = document.createElement('input');
         newField.setAttribute('type', 'text');
         newField.setAttribute('name', 'column[]');
-        newField.setAttribute('class', 'form-control  me-2');
+        newField.setAttribute('class', 'form-control input-data  me-2');
         newField.setAttribute('id', 'floatingInput');
-        newField.setAttribute('placeholder', 'Nama Tabel');
+        newField.setAttribute('placeholder', 'Nama Kolom');
         newContainer.appendChild(newField);
 
         var newLabel = document.createElement('label');
         newLabel.setAttribute('for', 'floatingInput');
-        newLabel.textContent = 'nama tabel';
+        newLabel.textContent = 'nama kolom';
         newContainer.appendChild(newLabel)
 
         var newDiv = document.createElement('div');

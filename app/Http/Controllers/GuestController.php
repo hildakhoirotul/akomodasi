@@ -83,6 +83,7 @@ class GuestController extends Controller
         $fasilitas = strtoupper(str_replace('_', ' ', $nama_tabel));
 
         $queryBuilder = DB::table($nama_tabel);
+        $queryBuilder->orderBy('id', 'desc');
         $tabel = $queryBuilder->paginate(50);
 
         $columns = Schema::getColumnListing($nama_tabel);

@@ -12,7 +12,7 @@
     <div class="col-12">
         <div class="card recent-sales overflow-auto">
             <div class="card-body">
-                <h5 class="card-title">Daftar Admin<span>| GA Section</span></h5>
+                <h5 class="card-title">Daftar Pengguna<span>| GA Section</span></h5>
                 <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
                 </div>
@@ -47,6 +47,7 @@
                                         <div class="form-group mt-2">
                                             <label for="password">PASSWORD</label>
                                             <input type="password" class="form-control item mt-1" name="password" id="password">
+                                            <!-- <i class="toggle-password-icon bi bi-eye-slash-fill" onclick="togglePasswordVisibility(this)"></i> -->
                                         </div>
                                         <div class="form-group d-flex justify-content-center mt-3">
                                             <button type="submit" class="btn btn-primary create-account">Simpan</button>

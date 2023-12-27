@@ -50,9 +50,9 @@ Route::controller(HomeController::class)->middleware(['web', 'activity', 'is_adm
     Route::get('/change-password', 'changePassword')->name('gantiSandi');
     Route::post('/ganti-sandi', 'gantiSandi')->name('changePassword');
     Route::get('/daftar-admin', 'daftarAdmin')->name('daftar.admin');
-    Route::post('/tambah-admin', 'addAdmin')->name('add.admin');
+    Route::post('/tambah/users', 'addAdmin')->name('add.admin');
     Route::get('/search-admin', 'searchAdmin')->name('search.admin');
-    Route::post('/edit-/users/{id}', 'editAdmin')->name('edit.admin');
+    Route::post('/edit/users/{id}', 'editAdmin')->name('edit.admin');
     Route::delete('/hapus-admin/{id}', 'deleteAdmin')->name('delete.admin');
 });
 

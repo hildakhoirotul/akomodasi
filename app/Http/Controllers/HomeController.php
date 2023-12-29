@@ -55,6 +55,7 @@ class HomeController extends Controller
         $falseCount = [];
         $totalFalse = [];
         $totalTrue = [];
+        // dd($latest);
         foreach ($latest as $item) {
             $tableName = $item->tabel;
             if ($tableName === 'users') {
@@ -79,6 +80,7 @@ class HomeController extends Controller
                 $totalTrue[$tableName] = $tableCounts[$tableName] - $totalFalse[$tableName];
             }
         }
+        // dd($tableCounts);
         return view('home', compact('list', 'activity', 'latest', 'tableCounts', 'totalFalse', 'totalTrue'));
     }
 

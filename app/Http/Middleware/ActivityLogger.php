@@ -39,10 +39,12 @@ class ActivityLogger
             $activity->status = 'text-warning';
 
             $pathSegments = explode('/', $request->path());
-            $second1 = isset($pathSegments[1]) ? $pathSegments[1] : null;
-            $secondSegment = urldecode($second1);
-            // $secondSegment = preg_replace('/[^\w\s]/', '', $second2);
-            $activity->tabel = $secondSegment;
+            // $second1 = isset($pathSegments[1]) ? $pathSegments[1] : null;
+            // $secondSegment = urldecode($second1);
+            $second1 = isset($pathSegments[1]) ? urldecode($pathSegments[1]) : null;
+            $activity->tabel = $second1;
+
+            // $activity->tabel = $secondSegment;
             $activity->save();
         }
 

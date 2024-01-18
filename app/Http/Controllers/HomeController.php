@@ -124,13 +124,13 @@ class HomeController extends Controller
 
         return redirect()->back();
     }
-
+ 
     public function hapusTabel($tabel)
     {
-        DB::table('Fasilitas')->where('name', $tabel)->delete();
+        DB::table('fasilitas')->where('name', $tabel)->delete();
 
         $namaTabel = str_replace(' ', '_', strtolower($tabel));
-        DB::statement("DROP TABLE $namaTabel");
+        DB::statement("DROP TABLE `$namaTabel`");
         DB::table('activities')->where('tabel', $namaTabel)->update(['tabel' => null]);
 
         return redirect()->back();

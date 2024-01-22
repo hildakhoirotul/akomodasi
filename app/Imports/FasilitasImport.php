@@ -25,14 +25,15 @@ class FasilitasImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'nama_properti' => 'required',
         ];
     }
 
     public function model(array $row)
     {
+        // dd($row);
         return new Fasilitas([
-            'name' => $row['name'],
+            'name' => $row['nama_properti'],
         ]);
     }
 
@@ -58,7 +59,7 @@ class FasilitasImport implements ToModel, WithHeadingRow, WithValidation, SkipsO
     public function customValidationMessage(): array
     {
         return [
-            'name.required' => 'Nama tidak boleh kosong.',
+            'nama_properti.required' => 'Nama tidak boleh kosong.',
         ];
     }
 

@@ -176,6 +176,17 @@ class HomeController extends Controller
         return redirect()->back();
     }
 
+    public function unduh($nama_file)
+    {
+        $path = storage_path('app/public/Download/' . $nama_file);
+
+        if (file_exists($path)) {
+            return response()->download($path);
+        } else {
+            abort(404);
+        }
+    }
+
     public function exportFasilitas()
     {
         $data = Fasilitas::all()->toArray();
@@ -194,7 +205,7 @@ class HomeController extends Controller
             return $nama;
         }, $fasName);
         foreach ($transFasName as $name) {
-            DB::statement("DROP TABLE $name");
+            DB::statement("DROP TABLE `$name`");
             DB::table('activities')->where('tabel', $name)->update(['tabel' => null]);
         }
         Fasilitas::truncate();

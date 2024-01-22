@@ -30,6 +30,7 @@ Route::controller(HomeController::class)->middleware(['web', 'activity', 'is_adm
     Route::get('/fasilitas/{nama_tabel}', 'fasilitas')->name('fasilitas');
     Route::post('/tambah-tabel', 'simpanDataTabel')->name('simpan.data.tabel');
     Route::post('/import-tabel', 'importData')->name('import.data.tabel');
+    Route::get('/unduh/{nama_file}', 'unduh')->name('unduh');
     Route::get('/unduh-properti', 'exportFasilitas')->name('export.fasilitas');
     Route::delete('/reset-daftar-tabel', 'resetFasilitas')->name('reset.fasilitas');
     Route::post('/tambah-kolom-di/{nama_tabel}', 'addColumn')->name('add.column');

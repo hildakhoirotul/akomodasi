@@ -17,13 +17,16 @@
                 <form action="{{ route('reset.fasilitas') }}" method="POST">
                     <div class="btn-group mb-2" role="group" aria-label="Basic outlined example">
                         <button type="button" class="btn btn-primary" id="addForm"><i class="bi bi-plus-square"></i>&nbsp Tambah</button>
-                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#importExcel"><i class="bi bi-upload"></i>&nbsp Unggah</button>
-                        <a href="{{ route('export.fasilitas') }}" class="btn btn-primary" role="button"><i class="bi bi-download"></i>&nbsp; Unduh</a>
+                        <a href="{{ url('/unduh/template.xlsx') }}" class="btn btn-outline-primary">
+                            <i class="bi bi-download"></i>&nbsp; Template
+                        </a>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#importExcel"><i class="bi bi-upload"></i>&nbsp Unggah</button>
+                        <a href="{{ route('export.fasilitas') }}" class="btn btn-outline-primary" role="button"><i class="bi bi-download"></i>&nbsp; Unduh</a>
                         <!-- <button type="button" class="btn btn-primary" onclick="window.location.href='{{ route('export.fasilitas') }}'"><i class="bi bi-download"></i>&nbsp Unduh</button> -->
                         <!-- <button type="button" class="btn btn-outline-primary"><i class="bi bi-arrow-repeat"></i>&nbsp Update</button> -->
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-outline-primary" onclick="showDeleteConfirmation(event, this)"><i class="bi bi-trash"></i>&nbsp Reset</button>
+                        <button type="button" class="btn btn-primary" onclick="showDeleteConfirmation(event, this)"><i class="bi bi-trash"></i>&nbsp Reset</button>
                     </div>
                 </form>
                 @endif
@@ -86,11 +89,11 @@
                             <th>{{ $i++ }}</th>
                             <td><a href="{{ Auth::user()->role == 'admin' ? route('fasilitas', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) : route('fasilitas.guest', ['nama_tabel' => str_replace(' ', '_', strtolower($l->name))]) }}">{{ $l->name }}</a></td>
                             <td>
-                            @if ($l->columns)
-                            {{ implode(', ', json_decode($l->columns, true)) }}
-                            @else
-                            0
-                            @endif
+                                @if ($l->columns)
+                                {{ implode(', ', json_decode($l->columns, true)) }}
+                                @else
+                                0
+                                @endif
                             </td>
                             <td>{{ $l->jumlah_atribut }}</td>
                             <td>{{ $l->jumlah }}</td>
